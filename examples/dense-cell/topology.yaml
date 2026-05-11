@@ -1,0 +1,140 @@
+purpose:
+  audience: "operations team running a colocation deployment with physically separated data and out-of-band management networks"
+  intent: "show a production rack at the upper limit of nodes netfig will render in a single (band, location) cell. Every host has two physical networks attached: a data uplink to the rack ToR, and a dedicated BMC port (iLO / IPMI / DRAC) on the out-of-band management network. The BMC connection is what the on-call engineer reaches when the data plane is down — including for power-cycle and console access — and that physical separation is the security property the diagram makes legible. The primary rack carries the full twelve hosts; the secondary rack is partially populated."
+
+legend:
+  symbols:
+    internet:
+      shape: ellipse
+    edge-router:
+      shape: rect
+    core-switch:
+      shape: rect
+    oob-switch:
+      shape: rect
+    tor-switch:
+      shape: rect
+    server:
+      shape: rect
+
+  line_kinds:
+    fiber:
+      style: solid
+      width: 2
+    copper:
+      style: solid
+      width: 1
+    bmc:
+      style: dashed
+      meaning: "out-of-band management port (BMC / iLO / IPMI / DRAC) on the dedicated OOB network; physically distinct from the data NIC"
+
+layout:
+  bands:
+    - name: external
+      roles: [internet]
+    - name: edge
+      roles: [edge-router]
+    - name: core
+      roles: [core-switch]
+    - name: oob-management
+      roles: [oob-switch]
+    - name: data-fabric
+      roles: [tor-switch]
+    - name: compute
+      roles: [server]
+
+  # Geographically: the network rack sits at the row head, the two
+  # compute racks sit to its right. Band ordering follows the data
+  # plane top-to-bottom (Internet → edge → core → ToR → host); the
+  # OOB switch is its own band between core and ToR because OOB
+  # traffic is logically routed through core but physically reaches
+  # the host through a separate cable run.
+  locations:
+    rack-net: "0"
+    rack-1:   "1"
+    rack-2:   "2"
+
+nodes:
+  # Network rack at the row head.
+  - { id: inet,    role: internet,    location: rack-net, label: Internet }
+  - { id: edge-rt, role: edge-router, location: rack-net, label: edge-rt }
+  - { id: core-sw, role: core-switch, location: rack-net, label: core-sw }
+  - { id: oob-sw,  role: oob-switch,  location: rack-net, label: oob-sw }
+
+  # ToR per compute rack.
+  - { id: tor-1, role: tor-switch, location: rack-1, label: tor-1 }
+  - { id: tor-2, role: tor-switch, location: rack-2, label: tor-2 }
+
+  # rack-1: production rack at netfig's per-cell limit (12 hosts).
+  # Adding a thirteenth here forces the run to fail validation; the
+  # author has to either split the band (e.g. dedicate a sub-band per
+  # function) or split the location (e.g. promote a sub-rack to its
+  # own column).
+  - { id: srv-1-01, role: server, location: rack-1, label: srv-1-01 }
+  - { id: srv-1-02, role: server, location: rack-1, label: srv-1-02 }
+  - { id: srv-1-03, role: server, location: rack-1, label: srv-1-03 }
+  - { id: srv-1-04, role: server, location: rack-1, label: srv-1-04 }
+  - { id: srv-1-05, role: server, location: rack-1, label: srv-1-05 }
+  - { id: srv-1-06, role: server, location: rack-1, label: srv-1-06 }
+  - { id: srv-1-07, role: server, location: rack-1, label: srv-1-07 }
+  - { id: srv-1-08, role: server, location: rack-1, label: srv-1-08 }
+  - { id: srv-1-09, role: server, location: rack-1, label: srv-1-09 }
+  - { id: srv-1-10, role: server, location: rack-1, label: srv-1-10 }
+  - { id: srv-1-11, role: server, location: rack-1, label: srv-1-11 }
+  - { id: srv-1-12, role: server, location: rack-1, label: srv-1-12 }
+
+  # rack-2: secondary rack, partially populated.
+  - { id: srv-2-01, role: server, location: rack-2, label: srv-2-01 }
+  - { id: srv-2-02, role: server, location: rack-2, label: srv-2-02 }
+  - { id: srv-2-03, role: server, location: rack-2, label: srv-2-03 }
+
+links:
+  # External uplink and core distribution.
+  - { from: inet,    to: edge-rt, kind: fiber }
+  - { from: edge-rt, to: core-sw, kind: fiber }
+  - { from: core-sw, to: tor-1,   kind: fiber }
+  - { from: core-sw, to: tor-2,   kind: fiber }
+
+  # Operations staff reach the OOB switch through core (a jump host
+  # in the management VLAN handles the actual access; the diagram
+  # only carries the physical link).
+  - { from: core-sw, to: oob-sw, kind: fiber }
+
+  # Data plane: each host's primary NIC to its rack's ToR.
+  - { from: tor-1, to: srv-1-01, kind: copper }
+  - { from: tor-1, to: srv-1-02, kind: copper }
+  - { from: tor-1, to: srv-1-03, kind: copper }
+  - { from: tor-1, to: srv-1-04, kind: copper }
+  - { from: tor-1, to: srv-1-05, kind: copper }
+  - { from: tor-1, to: srv-1-06, kind: copper }
+  - { from: tor-1, to: srv-1-07, kind: copper }
+  - { from: tor-1, to: srv-1-08, kind: copper }
+  - { from: tor-1, to: srv-1-09, kind: copper }
+  - { from: tor-1, to: srv-1-10, kind: copper }
+  - { from: tor-1, to: srv-1-11, kind: copper }
+  - { from: tor-1, to: srv-1-12, kind: copper }
+  - { from: tor-2, to: srv-2-01, kind: copper }
+  - { from: tor-2, to: srv-2-02, kind: copper }
+  - { from: tor-2, to: srv-2-03, kind: copper }
+
+  # OOB / BMC: each host's dedicated management port to the OOB
+  # switch, physically bypassing the data ToR. These are the edges
+  # that exercise the orthogonal routing — twelve siblings in rack-1
+  # all reach the same OOB switch through the same column gap, and
+  # the lane-separation logic keeps the management uplinks from
+  # piling up on each other.
+  - { from: srv-1-01, to: oob-sw, kind: bmc }
+  - { from: srv-1-02, to: oob-sw, kind: bmc }
+  - { from: srv-1-03, to: oob-sw, kind: bmc }
+  - { from: srv-1-04, to: oob-sw, kind: bmc }
+  - { from: srv-1-05, to: oob-sw, kind: bmc }
+  - { from: srv-1-06, to: oob-sw, kind: bmc }
+  - { from: srv-1-07, to: oob-sw, kind: bmc }
+  - { from: srv-1-08, to: oob-sw, kind: bmc }
+  - { from: srv-1-09, to: oob-sw, kind: bmc }
+  - { from: srv-1-10, to: oob-sw, kind: bmc }
+  - { from: srv-1-11, to: oob-sw, kind: bmc }
+  - { from: srv-1-12, to: oob-sw, kind: bmc }
+  - { from: srv-2-01, to: oob-sw, kind: bmc }
+  - { from: srv-2-02, to: oob-sw, kind: bmc }
+  - { from: srv-2-03, to: oob-sw, kind: bmc }

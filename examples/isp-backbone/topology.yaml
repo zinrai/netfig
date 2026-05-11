@@ -1,0 +1,169 @@
+purpose:
+  audience: "operations team running the AS backbone, on call for transit failures and iBGP issues"
+  intent: "show the geographic distribution of the core routers, the iBGP route-reflector hierarchy, the external transit and peering connections, and the aggregation routers serving customer access. The line-style choice carries operational meaning: a solid line denotes an eBGP session that terminates a peer or transit relationship, a dashed line denotes an iBGP session inside the AS. The on-call engineer should be able to tell, at a glance, which sessions are subject to which control plane."
+
+legend:
+  symbols:
+    transit:
+      shape: rect
+    peer:
+      shape: rect
+    route-reflector:
+      shape: rect
+    core-router:
+      shape: rect
+    agg-router:
+      shape: rect
+    customer:
+      shape: ellipse
+
+  line_kinds:
+    ebgp:
+      style: solid
+      width: 2
+    ibgp:
+      style: dashed
+      meaning: "iBGP session inside the AS. Configuration is owned by the IGP/BGP team and changes affect all peers in the mesh approximation."
+    customer-link:
+      style: solid
+      width: 1
+
+layout:
+  routing: orthogonal
+
+  bands:
+    - name: external
+      roles: [transit, peer]
+    - name: route-reflector
+      roles: [route-reflector]
+    - name: core
+      roles: [core-router]
+    - name: aggregation
+      roles: [agg-router]
+    - name: customer-edge
+      roles: [customer]
+
+  locations:
+    sapporo: "0"
+    tokyo:   "1"
+    osaka:   "2"
+    fukuoka: "3"
+
+nodes:
+  # External providers and peers. Two transit providers terminate in
+  # Tokyo for redundancy; two IXes provide regional peering.
+  - id: tier1-a
+    role: transit
+    location: tokyo
+    label: Tier-1 transit A
+  - id: tier1-b
+    role: transit
+    location: tokyo
+    label: Tier-1 transit B
+  - id: ix-tokyo
+    role: peer
+    location: tokyo
+    label: Tokyo IX
+  - id: ix-osaka
+    role: peer
+    location: osaka
+    label: Osaka IX
+
+  # A pair of route reflectors handle iBGP for all core routers,
+  # so the cores do not need a full mesh among themselves. The RRs
+  # are split geographically (Tokyo + Osaka) so that loss of either
+  # site does not partition the iBGP control plane.
+  - id: rr01
+    role: route-reflector
+    location: tokyo
+    label: rr01
+  - id: rr02
+    role: route-reflector
+    location: osaka
+    label: rr02
+
+  # Core routers, one per major city.
+  - id: core-sap
+    role: core-router
+    location: sapporo
+    label: core-sap
+  - id: core-tok
+    role: core-router
+    location: tokyo
+    label: core-tok
+  - id: core-osa
+    role: core-router
+    location: osaka
+    label: core-osa
+  - id: core-fuk
+    role: core-router
+    location: fukuoka
+    label: core-fuk
+
+  # Aggregation routers serving customers
+  - id: agg-sap
+    role: agg-router
+    location: sapporo
+    label: agg-sap
+  - id: agg-tok
+    role: agg-router
+    location: tokyo
+    label: agg-tok
+  - id: agg-osa
+    role: agg-router
+    location: osaka
+    label: agg-osa
+  - id: agg-fuk
+    role: agg-router
+    location: fukuoka
+    label: agg-fuk
+
+  # Representative customers (one per city).
+  - id: cust-sap
+    role: customer
+    location: sapporo
+    label: customers
+  - id: cust-tok
+    role: customer
+    location: tokyo
+    label: customers
+  - id: cust-osa
+    role: customer
+    location: osaka
+    label: customers
+  - id: cust-fuk
+    role: customer
+    location: fukuoka
+    label: customers
+
+links:
+  # External eBGP sessions (transit and peering). Each transit has
+  # its own session; failure of one does not affect the other.
+  - { from: tier1-a,  to: core-tok, kind: ebgp, label: transit }
+  - { from: tier1-b,  to: core-tok, kind: ebgp, label: transit }
+  - { from: ix-tokyo, to: core-tok, kind: ebgp, label: peering }
+  - { from: ix-osaka, to: core-osa, kind: ebgp, label: peering }
+
+  # Route reflectors peer with each other and with all core routers.
+  # No full mesh among cores: each core only peers with the RRs.
+  - { from: rr01, to: rr02,     kind: ibgp }
+  - { from: rr01, to: core-sap, kind: ibgp }
+  - { from: rr01, to: core-tok, kind: ibgp }
+  - { from: rr01, to: core-osa, kind: ibgp }
+  - { from: rr01, to: core-fuk, kind: ibgp }
+  - { from: rr02, to: core-sap, kind: ibgp }
+  - { from: rr02, to: core-tok, kind: ibgp }
+  - { from: rr02, to: core-osa, kind: ibgp }
+  - { from: rr02, to: core-fuk, kind: ibgp }
+
+  # Each core to its co-located aggregation router.
+  - { from: core-sap, to: agg-sap, kind: customer-link }
+  - { from: core-tok, to: agg-tok, kind: customer-link }
+  - { from: core-osa, to: agg-osa, kind: customer-link }
+  - { from: core-fuk, to: agg-fuk, kind: customer-link }
+
+  # Aggregation routers to customer terminations.
+  - { from: agg-sap, to: cust-sap, kind: customer-link }
+  - { from: agg-tok, to: cust-tok, kind: customer-link }
+  - { from: agg-osa, to: cust-osa, kind: customer-link }
+  - { from: agg-fuk, to: cust-fuk, kind: customer-link }

@@ -1,0 +1,119 @@
+purpose:
+  audience: "data centre fabric architects and operators familiar with RFC 7938 BGP-Clos terminology and the EVPN border-leaf / server-leaf role distinction"
+  intent: "show a 5-stage folded Clos fabric in canonical form. Tier-1 super-spines stitch the pods together; Tier-2 spines and Tier-3 leaves form a 3-stage Clos within each pod. Tier-3 hosts two kinds of leaf in the same band — border leaves whose downstream is the outside world, and server-facing leaves whose downstream is the rack of compute. They sit at the same depth from the fabric, regardless of which direction they face, so they share the band."
+
+legend:
+  symbols:
+    internet:
+      shape: ellipse
+    super-spine:
+      shape: rect
+    spine:
+      shape: rect
+    border-leaf:
+      shape: rect
+    server-leaf:
+      shape: rect
+    server:
+      shape: ellipse
+
+  line_kinds:
+    fabric:
+      style: solid
+      width: 2
+    transit:
+      style: solid
+      width: 1
+
+layout:
+  bands:
+    - name: external
+      roles: [internet]
+    - name: tier-1
+      roles: [super-spine]
+    - name: tier-2
+      roles: [spine]
+    # Tier-3 holds both leaf kinds. Splitting border leaves and
+    # server leaves into separate bands would force an extra row in
+    # the diagram, falsely implying that one kind sits "above" the
+    # other in the fabric. RFC 7938 places all leaves at the same
+    # Clos tier; the distinction between border and server is the
+    # direction their downstream faces, not their depth from the
+    # spine.
+    - name: tier-3
+      roles: [border-leaf, server-leaf]
+    - name: server
+      roles: [server]
+
+  # The fabric column hosts the super-spines (and the symbolic
+  # Internet attachment above them). Each pod is its own column;
+  # within a pod, the column carries that pod's spines, leaves, and
+  # representative servers.
+  locations:
+    fabric: "0"
+    pod-1:  "1"
+    pod-2:  "2"
+
+nodes:
+  - { id: inet, role: internet, location: fabric, label: Internet }
+
+  # Tier-1 super-spines: two for redundancy.
+  - { id: ssp-1, role: super-spine, location: fabric, label: ssp-1 }
+  - { id: ssp-2, role: super-spine, location: fabric, label: ssp-2 }
+
+  # Tier-2 pod spines: two per pod.
+  - { id: sp-1a, role: spine, location: pod-1, label: sp-1a }
+  - { id: sp-1b, role: spine, location: pod-1, label: sp-1b }
+  - { id: sp-2a, role: spine, location: pod-2, label: sp-2a }
+  - { id: sp-2b, role: spine, location: pod-2, label: sp-2b }
+
+  # Tier-3 leaves: one border leaf (Internet uplinks) plus two
+  # server-facing leaves per pod.
+  - { id: bl-1,  role: border-leaf, location: pod-1, label: bl-1 }
+  - { id: sl-1a, role: server-leaf, location: pod-1, label: sl-1a }
+  - { id: sl-1b, role: server-leaf, location: pod-1, label: sl-1b }
+  - { id: bl-2,  role: border-leaf, location: pod-2, label: bl-2 }
+  - { id: sl-2a, role: server-leaf, location: pod-2, label: sl-2a }
+  - { id: sl-2b, role: server-leaf, location: pod-2, label: sl-2b }
+
+  # One representative server per server-leaf.
+  - { id: srv-1a, role: server, location: pod-1, label: server }
+  - { id: srv-1b, role: server, location: pod-1, label: server }
+  - { id: srv-2a, role: server, location: pod-2, label: server }
+  - { id: srv-2b, role: server, location: pod-2, label: server }
+
+links:
+  # Internet uplinks via the border leaves.
+  - { from: inet, to: bl-1, kind: transit }
+  - { from: inet, to: bl-2, kind: transit }
+
+  # Tier-1 ↔ Tier-2: super-spines fully meshed with every pod spine.
+  - { from: ssp-1, to: sp-1a, kind: fabric }
+  - { from: ssp-1, to: sp-1b, kind: fabric }
+  - { from: ssp-1, to: sp-2a, kind: fabric }
+  - { from: ssp-1, to: sp-2b, kind: fabric }
+  - { from: ssp-2, to: sp-1a, kind: fabric }
+  - { from: ssp-2, to: sp-1b, kind: fabric }
+  - { from: ssp-2, to: sp-2a, kind: fabric }
+  - { from: ssp-2, to: sp-2b, kind: fabric }
+
+  # Tier-2 ↔ Tier-3 within each pod: every spine connects to every
+  # leaf (border + server-facing) in its pod.
+  - { from: sp-1a, to: bl-1,  kind: fabric }
+  - { from: sp-1a, to: sl-1a, kind: fabric }
+  - { from: sp-1a, to: sl-1b, kind: fabric }
+  - { from: sp-1b, to: bl-1,  kind: fabric }
+  - { from: sp-1b, to: sl-1a, kind: fabric }
+  - { from: sp-1b, to: sl-1b, kind: fabric }
+  - { from: sp-2a, to: bl-2,  kind: fabric }
+  - { from: sp-2a, to: sl-2a, kind: fabric }
+  - { from: sp-2a, to: sl-2b, kind: fabric }
+  - { from: sp-2b, to: bl-2,  kind: fabric }
+  - { from: sp-2b, to: sl-2a, kind: fabric }
+  - { from: sp-2b, to: sl-2b, kind: fabric }
+
+  # Server-facing leaves to representative servers.
+  - { from: sl-1a, to: srv-1a, kind: fabric }
+  - { from: sl-1b, to: srv-1b, kind: fabric }
+  - { from: sl-2a, to: srv-2a, kind: fabric }
+  - { from: sl-2b, to: srv-2b, kind: fabric }

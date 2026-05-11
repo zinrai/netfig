@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1130" height="820" viewBox="0 0 1130 820">
+  <style>
+    .node { fill: white; stroke: black; stroke-width: 1; }
+    .node-label { font-family: sans-serif; font-size: 11px; text-anchor: middle; dominant-baseline: central; }
+    .edge { stroke: black; fill: none; }
+    .edge-label { font-family: sans-serif; font-size: 10px; text-anchor: middle; }
+  </style>
+  <polyline class="edge" points="220,154 220,195 325,195 325,475 375,475 375,530"/>
+  <polyline class="edge" points="223,154 223,198 328,198 328,478 738,478 738,530"/>
+  <line class="edge" x1="150" y1="270" x2="455" y2="410" stroke-width="2"/>
+  <line class="edge" x1="150" y1="270" x2="565" y2="410" stroke-width="2"/>
+  <polyline class="edge" points="174,290 174,344 799,344 799,390" stroke-width="2"/>
+  <polyline class="edge" points="181,290 181,351 916,351 916,390" stroke-width="2"/>
+  <line class="edge" x1="260" y1="270" x2="455" y2="410" stroke-width="2"/>
+  <line class="edge" x1="260" y1="270" x2="565" y2="410" stroke-width="2"/>
+  <line class="edge" x1="260" y1="270" x2="815" y2="410" stroke-width="2"/>
+  <polyline class="edge" points="299,290 299,359 924,359 924,390" stroke-width="2"/>
+  <line class="edge" x1="455" y1="410" x2="400" y2="550" stroke-width="2"/>
+  <line class="edge" x1="455" y1="410" x2="510" y2="550" stroke-width="2"/>
+  <line class="edge" x1="455" y1="410" x2="620" y2="550" stroke-width="2"/>
+  <line class="edge" x1="565" y1="410" x2="400" y2="550" stroke-width="2"/>
+  <line class="edge" x1="565" y1="410" x2="510" y2="550" stroke-width="2"/>
+  <line class="edge" x1="565" y1="410" x2="620" y2="550" stroke-width="2"/>
+  <line class="edge" x1="815" y1="410" x2="760" y2="550" stroke-width="2"/>
+  <line class="edge" x1="815" y1="410" x2="870" y2="550" stroke-width="2"/>
+  <line class="edge" x1="815" y1="410" x2="980" y2="550" stroke-width="2"/>
+  <line class="edge" x1="925" y1="410" x2="760" y2="550" stroke-width="2"/>
+  <line class="edge" x1="925" y1="410" x2="870" y2="550" stroke-width="2"/>
+  <line class="edge" x1="925" y1="410" x2="980" y2="550" stroke-width="2"/>
+  <line class="edge" x1="510" y1="550" x2="445" y2="690" stroke-width="2"/>
+  <line class="edge" x1="620" y1="550" x2="575" y2="690" stroke-width="2"/>
+  <line class="edge" x1="870" y1="550" x2="805" y2="690" stroke-width="2"/>
+  <line class="edge" x1="980" y1="550" x2="935" y2="690" stroke-width="2"/>
+  <ellipse class="node" cx="205" cy="130" rx="60" ry="24"/>
+  <text class="node-label" x="205" y="130">Internet</text>
+  <rect class="node" x="100" y="250" width="100" height="40"/>
+  <text class="node-label" x="150" y="270">ssp-1</text>
+  <rect class="node" x="210" y="250" width="100" height="40"/>
+  <text class="node-label" x="260" y="270">ssp-2</text>
+  <rect class="node" x="405" y="390" width="100" height="40"/>
+  <text class="node-label" x="455" y="410">sp-1a</text>
+  <rect class="node" x="515" y="390" width="100" height="40"/>
+  <text class="node-label" x="565" y="410">sp-1b</text>
+  <rect class="node" x="765" y="390" width="100" height="40"/>
+  <text class="node-label" x="815" y="410">sp-2a</text>
+  <rect class="node" x="875" y="390" width="100" height="40"/>
+  <text class="node-label" x="925" y="410">sp-2b</text>
+  <rect class="node" x="350" y="530" width="100" height="40"/>
+  <text class="node-label" x="400" y="550">bl-1</text>
+  <rect class="node" x="460" y="530" width="100" height="40"/>
+  <text class="node-label" x="510" y="550">sl-1a</text>
+  <rect class="node" x="570" y="530" width="100" height="40"/>
+  <text class="node-label" x="620" y="550">sl-1b</text>
+  <rect class="node" x="710" y="530" width="100" height="40"/>
+  <text class="node-label" x="760" y="550">bl-2</text>
+  <rect class="node" x="820" y="530" width="100" height="40"/>
+  <text class="node-label" x="870" y="550">sl-2a</text>
+  <rect class="node" x="930" y="530" width="100" height="40"/>
+  <text class="node-label" x="980" y="550">sl-2b</text>
+  <ellipse class="node" cx="445" cy="690" rx="60" ry="24"/>
+  <text class="node-label" x="445" y="690">server</text>
+  <ellipse class="node" cx="575" cy="690" rx="60" ry="24"/>
+  <text class="node-label" x="575" y="690">server</text>
+  <ellipse class="node" cx="805" cy="690" rx="60" ry="24"/>
+  <text class="node-label" x="805" y="690">server</text>
+  <ellipse class="node" cx="935" cy="690" rx="60" ry="24"/>
+  <text class="node-label" x="935" y="690">server</text>
+</svg>

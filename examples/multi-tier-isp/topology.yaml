@@ -1,0 +1,132 @@
+purpose:
+  audience: "network architects and operations leads of a regional residential ISP, plus stakeholders from peering, transport, service, and last-mile teams who need to read the same picture"
+  intent: "show every functional layer a residential broadband packet traverses from Tier-1 transit through the access network down to the customer's CPE. Each city column carries one device per layer; the layer ordering encodes operational ownership — peering team owns the top three layers, transport team owns backbone and metro, service team owns BNG and access, last-mile team owns the OLT and CPE. The backbone is closed into a ring so a single fibre cut leaves all cities reachable, and the ring-closing edge across the diagram is what makes this a real-world rather than a textbook layout."
+
+legend:
+  symbols:
+    transit: { shape: ellipse }
+    ixp: { shape: ellipse }
+    peer-edge: { shape: rect }
+    backbone: { shape: rect }
+    metro-core: { shape: rect }
+    bng: { shape: rect }
+    olt: { shape: rect }
+    cpe: { shape: ellipse }
+
+  line_kinds:
+    fiber:
+      style: solid
+      width: 2
+    last-mile:
+      style: solid
+      width: 1
+
+layout:
+  bands:
+    - name: tier-1-transit
+      roles: [transit]
+    - name: peering-fabric
+      roles: [ixp]
+    - name: peering-edge
+      roles: [peer-edge]
+    - name: backbone
+      roles: [backbone]
+    - name: metro-core
+      roles: [metro-core]
+    - name: service-edge
+      roles: [bng]
+    - name: access
+      roles: [olt]
+    - name: customer
+      roles: [cpe]
+
+  locations:
+    sapporo: "0"
+    tokyo:   "1"
+    osaka:   "2"
+    fukuoka: "3"
+
+nodes:
+  # Two upstream Tier-1 transit attachments and two IXPs, terminating
+  # only at the two anchor cities (Tokyo, Osaka).
+  - { id: tier1-tok, role: transit, location: tokyo, label: Tier-1 }
+  - { id: tier1-osa, role: transit, location: osaka, label: Tier-1 }
+
+  - { id: ixp-tok, role: ixp, location: tokyo, label: tokyo-IX }
+  - { id: ixp-osa, role: ixp, location: osaka, label: osaka-IX }
+
+  # Peering edge routers (own peering-team ASN announcements).
+  - { id: pe-tok, role: peer-edge, location: tokyo, label: pe-tok }
+  - { id: pe-osa, role: peer-edge, location: osaka, label: pe-osa }
+
+  # Backbone P routers, one per city, closed into a ring.
+  - { id: bb-sap, role: backbone, location: sapporo, label: bb-sap }
+  - { id: bb-tok, role: backbone, location: tokyo,   label: bb-tok }
+  - { id: bb-osa, role: backbone, location: osaka,   label: bb-osa }
+  - { id: bb-fuk, role: backbone, location: fukuoka, label: bb-fuk }
+
+  # Metro core (regional aggregation).
+  - { id: mc-sap, role: metro-core, location: sapporo, label: mc-sap }
+  - { id: mc-tok, role: metro-core, location: tokyo,   label: mc-tok }
+  - { id: mc-osa, role: metro-core, location: osaka,   label: mc-osa }
+  - { id: mc-fuk, role: metro-core, location: fukuoka, label: mc-fuk }
+
+  # Service edge: BNG terminates the customer PPPoE/IPoE sessions.
+  - { id: bng-sap, role: bng, location: sapporo, label: bng-sap }
+  - { id: bng-tok, role: bng, location: tokyo,   label: bng-tok }
+  - { id: bng-osa, role: bng, location: osaka,   label: bng-osa }
+  - { id: bng-fuk, role: bng, location: fukuoka, label: bng-fuk }
+
+  # Access concentrator (PON OLT, one per city).
+  - { id: olt-sap, role: olt, location: sapporo, label: olt-sap }
+  - { id: olt-tok, role: olt, location: tokyo,   label: olt-tok }
+  - { id: olt-osa, role: olt, location: osaka,   label: olt-osa }
+  - { id: olt-fuk, role: olt, location: fukuoka, label: olt-fuk }
+
+  # Representative customer CPE per city.
+  - { id: cust-sap, role: cpe, location: sapporo, label: customer }
+  - { id: cust-tok, role: cpe, location: tokyo,   label: customer }
+  - { id: cust-osa, role: cpe, location: osaka,   label: customer }
+  - { id: cust-fuk, role: cpe, location: fukuoka, label: customer }
+
+links:
+  # External attachments at Tokyo and Osaka.
+  - { from: tier1-tok, to: pe-tok, kind: fiber }
+  - { from: tier1-osa, to: pe-osa, kind: fiber }
+  - { from: ixp-tok,   to: pe-tok, kind: fiber }
+  - { from: ixp-osa,   to: pe-osa, kind: fiber }
+
+  # Peering edge to backbone.
+  - { from: pe-tok, to: bb-tok, kind: fiber }
+  - { from: pe-osa, to: bb-osa, kind: fiber }
+
+  # Backbone ring: each P router connects to its two neighbours so
+  # any single fibre cut leaves all four cities reachable. The
+  # ring-closing edge bb-sap — bb-fuk crosses the diagram laterally
+  # and is the visible difference between "linear chain" and "real
+  # ring".
+  - { from: bb-sap, to: bb-tok, kind: fiber }
+  - { from: bb-tok, to: bb-osa, kind: fiber }
+  - { from: bb-osa, to: bb-fuk, kind: fiber }
+  - { from: bb-fuk, to: bb-sap, kind: fiber }
+
+  # Vertical chain per city: backbone → metro → bng → olt → cpe.
+  - { from: bb-sap, to: mc-sap, kind: fiber }
+  - { from: bb-tok, to: mc-tok, kind: fiber }
+  - { from: bb-osa, to: mc-osa, kind: fiber }
+  - { from: bb-fuk, to: mc-fuk, kind: fiber }
+
+  - { from: mc-sap, to: bng-sap, kind: fiber }
+  - { from: mc-tok, to: bng-tok, kind: fiber }
+  - { from: mc-osa, to: bng-osa, kind: fiber }
+  - { from: mc-fuk, to: bng-fuk, kind: fiber }
+
+  - { from: bng-sap, to: olt-sap, kind: fiber }
+  - { from: bng-tok, to: olt-tok, kind: fiber }
+  - { from: bng-osa, to: olt-osa, kind: fiber }
+  - { from: bng-fuk, to: olt-fuk, kind: fiber }
+
+  - { from: olt-sap, to: cust-sap, kind: last-mile }
+  - { from: olt-tok, to: cust-tok, kind: last-mile }
+  - { from: olt-osa, to: cust-osa, kind: last-mile }
+  - { from: olt-fuk, to: cust-fuk, kind: last-mile }

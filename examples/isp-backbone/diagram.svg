@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="820" viewBox="0 0 1000 820">
+  <style>
+    .node { fill: white; stroke: black; stroke-width: 1; }
+    .node-label { font-family: sans-serif; font-size: 11px; text-anchor: middle; dominant-baseline: central; }
+    .edge { stroke: black; fill: none; }
+    .edge-label { font-family: sans-serif; font-size: 10px; text-anchor: middle; }
+  </style>
+  <polyline class="edge" points="329,150 329,199 599,199 599,339 439,339 439,390" stroke-width="2"/>
+  <text class="edge-label" x="464" y="196">transit</text>
+  <polyline class="edge" points="447,150 447,207 607,207 607,347 447,347 447,390" stroke-width="2"/>
+  <text class="edge-label" x="527" y="204">transit</text>
+  <polyline class="edge" points="565,150 565,215 615,215 615,355 455,355 455,390" stroke-width="2"/>
+  <text class="edge-label" x="535" y="352">peering</text>
+  <polyline class="edge" points="714,150 714,214 774,214 774,354 714,354 714,390" stroke-width="2"/>
+  <text class="edge-label" x="744" y="211">peering</text>
+  <line class="edge" x1="420" y1="270" x2="680" y2="270" stroke-dasharray="6,4"/>
+  <line class="edge" x1="420" y1="270" x2="160" y2="410" stroke-dasharray="6,4"/>
+  <line class="edge" x1="420" y1="270" x2="420" y2="410" stroke-dasharray="6,4"/>
+  <line class="edge" x1="420" y1="270" x2="680" y2="410" stroke-dasharray="6,4"/>
+  <line class="edge" x1="420" y1="270" x2="840" y2="410" stroke-dasharray="6,4"/>
+  <line class="edge" x1="680" y1="270" x2="160" y2="410" stroke-dasharray="6,4"/>
+  <line class="edge" x1="680" y1="270" x2="420" y2="410" stroke-dasharray="6,4"/>
+  <line class="edge" x1="680" y1="270" x2="680" y2="410" stroke-dasharray="6,4"/>
+  <line class="edge" x1="680" y1="270" x2="840" y2="410" stroke-dasharray="6,4"/>
+  <line class="edge" x1="160" y1="410" x2="160" y2="550"/>
+  <line class="edge" x1="420" y1="410" x2="420" y2="550"/>
+  <line class="edge" x1="680" y1="410" x2="680" y2="550"/>
+  <line class="edge" x1="840" y1="410" x2="840" y2="550"/>
+  <line class="edge" x1="160" y1="550" x2="160" y2="690"/>
+  <line class="edge" x1="420" y1="550" x2="420" y2="690"/>
+  <line class="edge" x1="680" y1="550" x2="680" y2="690"/>
+  <line class="edge" x1="840" y1="550" x2="840" y2="690"/>
+  <rect class="node" x="260" y="110" width="100" height="40"/>
+  <text class="node-label" x="310" y="130">Tier-1 transit A</text>
+  <rect class="node" x="370" y="110" width="100" height="40"/>
+  <text class="node-label" x="420" y="130">Tier-1 transit B</text>
+  <rect class="node" x="480" y="110" width="100" height="40"/>
+  <text class="node-label" x="530" y="130">Tokyo IX</text>
+  <rect class="node" x="630" y="110" width="100" height="40"/>
+  <text class="node-label" x="680" y="130">Osaka IX</text>
+  <rect class="node" x="370" y="250" width="100" height="40"/>
+  <text class="node-label" x="420" y="270">rr01</text>
+  <rect class="node" x="630" y="250" width="100" height="40"/>
+  <text class="node-label" x="680" y="270">rr02</text>
+  <rect class="node" x="110" y="390" width="100" height="40"/>
+  <text class="node-label" x="160" y="410">core-sap</text>
+  <rect class="node" x="370" y="390" width="100" height="40"/>
+  <text class="node-label" x="420" y="410">core-tok</text>
+  <rect class="node" x="630" y="390" width="100" height="40"/>
+  <text class="node-label" x="680" y="410">core-osa</text>
+  <rect class="node" x="790" y="390" width="100" height="40"/>
+  <text class="node-label" x="840" y="410">core-fuk</text>
+  <rect class="node" x="110" y="530" width="100" height="40"/>
+  <text class="node-label" x="160" y="550">agg-sap</text>
+  <rect class="node" x="370" y="530" width="100" height="40"/>
+  <text class="node-label" x="420" y="550">agg-tok</text>
+  <rect class="node" x="630" y="530" width="100" height="40"/>
+  <text class="node-label" x="680" y="550">agg-osa</text>
+  <rect class="node" x="790" y="530" width="100" height="40"/>
+  <text class="node-label" x="840" y="550">agg-fuk</text>
+  <ellipse class="node" cx="160" cy="690" rx="60" ry="24"/>
+  <text class="node-label" x="160" y="690">customers</text>
+  <ellipse class="node" cx="420" cy="690" rx="60" ry="24"/>
+  <text class="node-label" x="420" y="690">customers</text>
+  <ellipse class="node" cx="680" cy="690" rx="60" ry="24"/>
+  <text class="node-label" x="680" y="690">customers</text>
+  <ellipse class="node" cx="840" cy="690" rx="60" ry="24"/>
+  <text class="node-label" x="840" y="690">customers</text>
+</svg>

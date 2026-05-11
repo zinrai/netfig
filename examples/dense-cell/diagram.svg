@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="2030" height="960" viewBox="0 0 2030 960">
+  <style>
+    .node { fill: white; stroke: black; stroke-width: 1; }
+    .node-label { font-family: sans-serif; font-size: 11px; text-anchor: middle; dominant-baseline: central; }
+    .edge { stroke: black; fill: none; }
+    .edge-label { font-family: sans-serif; font-size: 10px; text-anchor: middle; }
+  </style>
+  <line class="edge" x1="160" y1="130" x2="160" y2="270" stroke-width="2"/>
+  <line class="edge" x1="160" y1="270" x2="160" y2="410" stroke-width="2"/>
+  <line class="edge" x1="160" y1="410" x2="915" y2="690" stroke-width="2"/>
+  <line class="edge" x1="160" y1="410" x2="1770" y2="690" stroke-width="2"/>
+  <line class="edge" x1="160" y1="410" x2="160" y2="550" stroke-width="2"/>
+  <polyline class="edge" points="915,710 310,810"/>
+  <polyline class="edge" points="915,710 420,810"/>
+  <line class="edge" x1="915" y1="690" x2="530" y2="830"/>
+  <line class="edge" x1="915" y1="690" x2="640" y2="830"/>
+  <line class="edge" x1="915" y1="690" x2="750" y2="830"/>
+  <line class="edge" x1="915" y1="690" x2="860" y2="830"/>
+  <line class="edge" x1="915" y1="690" x2="970" y2="830"/>
+  <line class="edge" x1="915" y1="690" x2="1080" y2="830"/>
+  <line class="edge" x1="915" y1="690" x2="1190" y2="830"/>
+  <line class="edge" x1="915" y1="690" x2="1300" y2="830"/>
+  <polyline class="edge" points="915,710 1410,810"/>
+  <polyline class="edge" points="915,710 1520,810"/>
+  <line class="edge" x1="1770" y1="690" x2="1660" y2="830"/>
+  <line class="edge" x1="1770" y1="690" x2="1770" y2="830"/>
+  <line class="edge" x1="1770" y1="690" x2="1880" y2="830"/>
+  <line class="edge" x1="310" y1="830" x2="160" y2="550" stroke-dasharray="6,4"/>
+  <line class="edge" x1="420" y1="830" x2="160" y2="550" stroke-dasharray="6,4"/>
+  <line class="edge" x1="530" y1="830" x2="160" y2="550" stroke-dasharray="6,4"/>
+  <line class="edge" x1="640" y1="830" x2="160" y2="550" stroke-dasharray="6,4"/>
+  <line class="edge" x1="750" y1="830" x2="160" y2="550" stroke-dasharray="6,4"/>
+  <line class="edge" x1="860" y1="830" x2="160" y2="550" stroke-dasharray="6,4"/>
+  <line class="edge" x1="970" y1="830" x2="160" y2="550" stroke-dasharray="6,4"/>
+  <polyline class="edge" points="1070,810 1070,770 250,770 250,630 190,630 190,570" stroke-dasharray="6,4"/>
+  <polyline class="edge" points="1185,810 1185,775 255,775 255,635 195,635 195,570" stroke-dasharray="6,4"/>
+  <polyline class="edge" points="1300,810 1300,780 260,780 260,640 200,640 200,570" stroke-dasharray="6,4"/>
+  <polyline class="edge" points="1415,810 1415,785 265,785 265,645 205,645 205,570" stroke-dasharray="6,4"/>
+  <polyline class="edge" points="1530,810 1530,790 270,790 270,650 210,650 210,570" stroke-dasharray="6,4"/>
+  <polyline class="edge" points="1638,810 1638,758 1588,758 1588,618 178,618 178,570" stroke-dasharray="6,4"/>
+  <polyline class="edge" points="1756,810 1756,766 1596,766 1596,626 186,626 186,570" stroke-dasharray="6,4"/>
+  <polyline class="edge" points="1874,810 1874,774 1604,774 1604,634 194,634 194,570" stroke-dasharray="6,4"/>
+  <ellipse class="node" cx="160" cy="130" rx="60" ry="24"/>
+  <text class="node-label" x="160" y="130">Internet</text>
+  <rect class="node" x="110" y="250" width="100" height="40"/>
+  <text class="node-label" x="160" y="270">edge-rt</text>
+  <rect class="node" x="110" y="390" width="100" height="40"/>
+  <text class="node-label" x="160" y="410">core-sw</text>
+  <rect class="node" x="110" y="530" width="100" height="40"/>
+  <text class="node-label" x="160" y="550">oob-sw</text>
+  <rect class="node" x="865" y="670" width="100" height="40"/>
+  <text class="node-label" x="915" y="690">tor-1</text>
+  <rect class="node" x="1720" y="670" width="100" height="40"/>
+  <text class="node-label" x="1770" y="690">tor-2</text>
+  <rect class="node" x="260" y="810" width="100" height="40"/>
+  <text class="node-label" x="310" y="830">srv-1-01</text>
+  <rect class="node" x="370" y="810" width="100" height="40"/>
+  <text class="node-label" x="420" y="830">srv-1-02</text>
+  <rect class="node" x="480" y="810" width="100" height="40"/>
+  <text class="node-label" x="530" y="830">srv-1-03</text>
+  <rect class="node" x="590" y="810" width="100" height="40"/>
+  <text class="node-label" x="640" y="830">srv-1-04</text>
+  <rect class="node" x="700" y="810" width="100" height="40"/>
+  <text class="node-label" x="750" y="830">srv-1-05</text>
+  <rect class="node" x="810" y="810" width="100" height="40"/>
+  <text class="node-label" x="860" y="830">srv-1-06</text>
+  <rect class="node" x="920" y="810" width="100" height="40"/>
+  <text class="node-label" x="970" y="830">srv-1-07</text>
+  <rect class="node" x="1030" y="810" width="100" height="40"/>
+  <text class="node-label" x="1080" y="830">srv-1-08</text>
+  <rect class="node" x="1140" y="810" width="100" height="40"/>
+  <text class="node-label" x="1190" y="830">srv-1-09</text>
+  <rect class="node" x="1250" y="810" width="100" height="40"/>
+  <text class="node-label" x="1300" y="830">srv-1-10</text>
+  <rect class="node" x="1360" y="810" width="100" height="40"/>
+  <text class="node-label" x="1410" y="830">srv-1-11</text>
+  <rect class="node" x="1470" y="810" width="100" height="40"/>
+  <text class="node-label" x="1520" y="830">srv-1-12</text>
+  <rect class="node" x="1610" y="810" width="100" height="40"/>
+  <text class="node-label" x="1660" y="830">srv-2-01</text>
+  <rect class="node" x="1720" y="810" width="100" height="40"/>
+  <text class="node-label" x="1770" y="830">srv-2-02</text>
+  <rect class="node" x="1830" y="810" width="100" height="40"/>
+  <text class="node-label" x="1880" y="830">srv-2-03</text>
+</svg>

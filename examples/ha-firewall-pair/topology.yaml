@@ -1,0 +1,82 @@
+purpose:
+  audience: "operations team handling firewall failovers"
+  intent: "show the active-standby firewall pair with VRRP, the redundant uplinks from the upstream routers, and the redundant downlinks to the core switches"
+
+legend:
+  symbols:
+    edge-router:
+      shape: rect
+    firewall:
+      shape: rect
+    l3-switch:
+      shape: rect
+
+  line_kinds:
+    primary:
+      style: solid
+      width: 2
+    standby:
+      style: dashed
+      meaning: standby_path
+
+layout:
+  routing: orthogonal
+
+  bands:
+    - name: external
+      roles: [edge-router]
+    - name: security
+      roles: [firewall]
+    - name: core
+      roles: [l3-switch]
+
+  locations:
+    a: "0"
+    b: "1"
+
+nodes:
+  # Redundant upstream edge routers
+  - id: rt01
+    role: edge-router
+    location: a
+    label: rt01 (active)
+  - id: rt02
+    role: edge-router
+    location: b
+    label: rt02 (standby)
+
+  # Active-standby firewall pair
+  - id: fw01
+    role: firewall
+    location: a
+    label: fw01 (active)
+  - id: fw02
+    role: firewall
+    location: b
+    label: fw02 (standby)
+
+  # Redundant core switches
+  - id: core01
+    role: l3-switch
+    location: a
+    label: core01
+  - id: core02
+    role: l3-switch
+    location: b
+    label: core02
+
+links:
+  # Each upstream router goes down to its same-side firewall as primary
+  # and to the other-side firewall as standby. Cross-links use the
+  # standby kind so the active path reads as the straight vertical line.
+  - { from: rt01, to: fw01, kind: primary }
+  - { from: rt02, to: fw02, kind: primary }
+  - { from: rt01, to: fw02, kind: standby }
+  - { from: rt02, to: fw01, kind: standby }
+
+  # Each firewall goes down to its same-side core as primary, with
+  # cross-links as standby paths.
+  - { from: fw01, to: core01, kind: primary }
+  - { from: fw02, to: core02, kind: primary }
+  - { from: fw01, to: core02, kind: standby }
+  - { from: fw02, to: core01, kind: standby }
