@@ -10,16 +10,28 @@ package main
 // default column width.
 
 const (
-	bandHeight       = 140 // vertical pixels per band row
-	defaultColWidth  = 140 // horizontal pixels per single-node column
-	marginX          = 80
-	marginY          = 60
-	rectWidth        = 100
-	rectHeight       = 40
-	ellipseRx        = 60
-	ellipseRy        = 24
-	intraCellGap     = 10 // gap between sibling nodes in the same cell
+	bandHeight = 140 // vertical pixels per band row
+	marginX    = 80
+	marginY    = 60
+
+	// rectWidth and ellipseRx are sized to fit the longest labels
+	// realistically expected on a network diagram — role identifiers
+	// plus a brief qualifier ("site-b-edge1 (transit)", "customer-a
+	// AS65100"). A label longer than these widths is a signal that
+	// the writer's label is too verbose for the diagram and should
+	// be shortened, not that the node should grow further.
+	rectWidth  = 160
+	rectHeight = 40
+	ellipseRx  = 90
+	ellipseRy  = 28
+
+	intraCellGap     = 15 // gap between sibling nodes in the same cell
 	intraCellPadding = 20 // empty space inside a column on each side
+
+	// defaultColWidth is the width of a column carrying a single
+	// node; it leaves intraCellPadding worth of empty space on each
+	// side of the widest possible single shape (an ellipse).
+	defaultColWidth = ellipseRx*2 + 2*intraCellPadding
 )
 
 // placed is a node enriched with computed pixel coordinates.
@@ -59,8 +71,17 @@ type columnLayout struct {
 }
 
 // placeNodes assigns pixel coordinates to every node, derived from
-// its (band, col) pair in info. It also returns the total SVG width
-// required, since multi-node cells widen their column.
+// its (band, col) pair in info. It also returns the columnLayout used
+// for the placement, so other renderers (groups, edge labels) can map
+// (band, col) cells to pixel coordinates from the same source of
+// truth.
+//
+// The pattern index is consulted so that columns linked by sibling
+// (parallel-run) groups get extra horizontal spacing. A pair of
+// columns connected by N parallel siblings needs room for N stacked
+// labels and N offset paths in the gap between them; widening the
+// gap here is what keeps those labels from spilling into the
+// neighbouring columns at render time.
 //
 // Within a (band, col) cell, nodes are spread side-by-side in YAML
 // order. The cell's intra-cell step is sized to fit the widest shape
@@ -68,10 +89,62 @@ type columnLayout struct {
 // (which are wider than rects under the current legend geometry)
 // expand to ellipseRx*2+gap so siblings do not overlap. Single-node
 // cells keep the default column width.
-func placeNodes(cfg *Config, info *LayoutInfo) ([]placed, int) {
+func placeNodes(cfg *Config, info *LayoutInfo, patterns *patternIndex) ([]placed, columnLayout) {
 	cells, nodeIdx, maxCol := groupNodesByCell(cfg, info)
-	cols := computeColumnLayout(cells, maxCol)
-	return placeAll(cfg, info, cells, nodeIdx, cols), cols.totalWidth
+	gapDemand := siblingGapDemand(cfg, info, patterns, maxCol)
+	cols := computeColumnLayout(cells, maxCol, gapDemand)
+	return placeAll(cfg, info, cells, nodeIdx, cols), cols
+}
+
+// siblingGapDemand returns, for each inter-column gap, the largest
+// sibling-group size whose links cross that gap. gap[i] is the
+// horizontal space between column i and column i+1; the last entry
+// (gap[maxCol]) is unused.
+//
+// A pair of columns linked by N parallel siblings needs room in the
+// gap between them for N stacked labels and N offset paths. Widening
+// the gap rather than the columns themselves is what keeps the gap
+// available for labels: a wider column would push its node toward
+// its centre, but a wider gap pushes the next column out, freeing
+// the inter-node space where the labels actually live.
+func siblingGapDemand(cfg *Config, info *LayoutInfo, patterns *patternIndex, maxCol int) []int {
+	out := make([]int, maxCol+1)
+	for i := range out {
+		out[i] = 1
+	}
+	for i, l := range cfg.Links {
+		sib := patterns.siblingOf(i)
+		if sib.Size <= 1 {
+			continue
+		}
+		fc, okF := info.LocationToCol[locationOf(cfg, l.From)]
+		tc, okT := info.LocationToCol[locationOf(cfg, l.To)]
+		if !okF || !okT || fc == tc {
+			continue
+		}
+		lo, hi := fc, tc
+		if lo > hi {
+			lo, hi = hi, lo
+		}
+		// A link from fc to tc crosses every gap in between.
+		for g := lo; g < hi; g++ {
+			if sib.Size > out[g] {
+				out[g] = sib.Size
+			}
+		}
+	}
+	return out
+}
+
+// locationOf returns the location of the node with the given id, or
+// "" if not found. Used to map a link's endpoint to a column.
+func locationOf(cfg *Config, id string) string {
+	for _, n := range cfg.Nodes {
+		if n.ID == id {
+			return n.Location
+		}
+	}
+	return ""
 }
 
 // groupNodesByCell collects nodes into their (band, col) cells, in
@@ -82,10 +155,7 @@ func groupNodesByCell(cfg *Config, info *LayoutInfo) (map[cellKey]*cellMeta, map
 	nodeIdx := map[string]int{}
 	maxCol := 0
 	for _, n := range cfg.Nodes {
-		bi, okB := info.RoleToBand[n.Role]
-		if !okB {
-			continue
-		}
+		bi := info.RoleToBand[n.Role]
 		ci := info.LocationToCol[n.Location]
 		k := cellKey{col: ci, band: bi}
 		c := cells[k]
@@ -117,9 +187,19 @@ func shapeWidthOf(cfg *Config, role string) int {
 	return rectWidth
 }
 
+// siblingExtraPerStep is the additional horizontal padding added to
+// a column for each parallel-run sibling beyond the first. The value
+// reserves enough space inside the column for a sibling-group's
+// stacked labels and parallel lanes when one of its links exits or
+// enters this column. A column with no parallel runs adds nothing.
+const siblingExtraPerStep = 48
+
 // computeColumnLayout sizes each column to fit the widest cell in it
-// and computes column centres from the cumulative widths.
-func computeColumnLayout(cells map[cellKey]*cellMeta, maxCol int) columnLayout {
+// and computes column centres from the cumulative widths. Where
+// sibling links cross the gap between two columns, extra horizontal
+// space is inserted after the source column so the parallel runs
+// and their labels have room in the gap.
+func computeColumnLayout(cells map[cellKey]*cellMeta, maxCol int, gapDemand []int) columnLayout {
 	colCount := maxCol + 1
 
 	maxContent := make([]int, colCount)
@@ -148,6 +228,13 @@ func computeColumnLayout(cells map[cellKey]*cellMeta, maxCol int) columnLayout {
 	for c, w := range widths {
 		centers[c] = x + w/2
 		x += w
+		// Insert extra horizontal space after this column for any
+		// sibling-group crossing the gap to the next column. A solo
+		// link in this gap (demand 1) gets no extra; a pair gets one
+		// step; a triplet gets two steps.
+		if c < len(gapDemand) && c < colCount-1 && gapDemand[c] > 1 {
+			x += (gapDemand[c] - 1) * siblingExtraPerStep
+		}
 	}
 
 	return columnLayout{widths: widths, centers: centers, totalWidth: x + marginX}
@@ -159,10 +246,7 @@ func computeColumnLayout(cells map[cellKey]*cellMeta, maxCol int) columnLayout {
 func placeAll(cfg *Config, info *LayoutInfo, cells map[cellKey]*cellMeta, nodeIdx map[string]int, cols columnLayout) []placed {
 	out := make([]placed, 0, len(cfg.Nodes))
 	for _, n := range cfg.Nodes {
-		bi, okB := info.RoleToBand[n.Role]
-		if !okB {
-			continue
-		}
+		bi := info.RoleToBand[n.Role]
 		ci := info.LocationToCol[n.Location]
 		cell := cells[cellKey{col: ci, band: bi}]
 		idx := nodeIdx[n.ID]

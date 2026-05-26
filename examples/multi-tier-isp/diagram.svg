@@ -1,87 +1,91 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1240" viewBox="0 0 800 1240">
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="1240" viewBox="0 0 1040 1240">
   <style>
     .node { fill: white; stroke: black; stroke-width: 1; }
     .node-label { font-family: sans-serif; font-size: 11px; text-anchor: middle; dominant-baseline: central; }
     .edge { stroke: black; fill: none; }
     .edge-label { font-family: sans-serif; font-size: 10px; text-anchor: middle; }
+    .group { fill: #f2f2f2; stroke: none; }
+    .group-label { font-family: sans-serif; font-size: 11px; fill: #555; }
   </style>
-  <polyline class="edge" points="347,154 347,207 407,207 407,347 347,347 347,390" stroke-width="2"/>
-  <polyline class="edge" points="514,154 514,214 574,214 574,354 514,354 514,390" stroke-width="2"/>
-  <line class="edge" x1="320" y1="270" x2="320" y2="410" stroke-width="2"/>
-  <line class="edge" x1="480" y1="270" x2="480" y2="410" stroke-width="2"/>
-  <line class="edge" x1="320" y1="410" x2="320" y2="550" stroke-width="2"/>
-  <line class="edge" x1="480" y1="410" x2="480" y2="550" stroke-width="2"/>
-  <line class="edge" x1="160" y1="550" x2="320" y2="550" stroke-width="2"/>
-  <line class="edge" x1="320" y1="550" x2="480" y2="550" stroke-width="2"/>
-  <line class="edge" x1="480" y1="550" x2="640" y2="550" stroke-width="2"/>
-  <polyline class="edge" points="640,530 640,480 160,480 160,530" stroke-width="2"/>
-  <line class="edge" x1="160" y1="550" x2="160" y2="690" stroke-width="2"/>
-  <line class="edge" x1="320" y1="550" x2="320" y2="690" stroke-width="2"/>
-  <line class="edge" x1="480" y1="550" x2="480" y2="690" stroke-width="2"/>
-  <line class="edge" x1="640" y1="550" x2="640" y2="690" stroke-width="2"/>
-  <line class="edge" x1="160" y1="690" x2="160" y2="830" stroke-width="2"/>
-  <line class="edge" x1="320" y1="690" x2="320" y2="830" stroke-width="2"/>
-  <line class="edge" x1="480" y1="690" x2="480" y2="830" stroke-width="2"/>
-  <line class="edge" x1="640" y1="690" x2="640" y2="830" stroke-width="2"/>
-  <line class="edge" x1="160" y1="830" x2="160" y2="970" stroke-width="2"/>
-  <line class="edge" x1="320" y1="830" x2="320" y2="970" stroke-width="2"/>
-  <line class="edge" x1="480" y1="830" x2="480" y2="970" stroke-width="2"/>
-  <line class="edge" x1="640" y1="830" x2="640" y2="970" stroke-width="2"/>
-  <line class="edge" x1="160" y1="970" x2="160" y2="1110"/>
-  <line class="edge" x1="320" y1="970" x2="320" y2="1110"/>
-  <line class="edge" x1="480" y1="970" x2="480" y2="1110"/>
-  <line class="edge" x1="640" y1="970" x2="640" y2="1110"/>
-  <ellipse class="node" cx="320" cy="130" rx="60" ry="24"/>
-  <text class="node-label" x="320" y="130">Tier-1</text>
-  <ellipse class="node" cx="480" cy="130" rx="60" ry="24"/>
-  <text class="node-label" x="480" y="130">Tier-1</text>
-  <ellipse class="node" cx="320" cy="270" rx="60" ry="24"/>
-  <text class="node-label" x="320" y="270">tokyo-IX</text>
-  <ellipse class="node" cx="480" cy="270" rx="60" ry="24"/>
-  <text class="node-label" x="480" y="270">osaka-IX</text>
-  <rect class="node" x="270" y="390" width="100" height="40"/>
-  <text class="node-label" x="320" y="410">pe-tok</text>
-  <rect class="node" x="430" y="390" width="100" height="40"/>
-  <text class="node-label" x="480" y="410">pe-osa</text>
-  <rect class="node" x="110" y="530" width="100" height="40"/>
-  <text class="node-label" x="160" y="550">bb-sap</text>
-  <rect class="node" x="270" y="530" width="100" height="40"/>
-  <text class="node-label" x="320" y="550">bb-tok</text>
-  <rect class="node" x="430" y="530" width="100" height="40"/>
-  <text class="node-label" x="480" y="550">bb-osa</text>
-  <rect class="node" x="590" y="530" width="100" height="40"/>
-  <text class="node-label" x="640" y="550">bb-fuk</text>
-  <rect class="node" x="110" y="670" width="100" height="40"/>
-  <text class="node-label" x="160" y="690">mc-sap</text>
-  <rect class="node" x="270" y="670" width="100" height="40"/>
-  <text class="node-label" x="320" y="690">mc-tok</text>
-  <rect class="node" x="430" y="670" width="100" height="40"/>
-  <text class="node-label" x="480" y="690">mc-osa</text>
-  <rect class="node" x="590" y="670" width="100" height="40"/>
-  <text class="node-label" x="640" y="690">mc-fuk</text>
-  <rect class="node" x="110" y="810" width="100" height="40"/>
-  <text class="node-label" x="160" y="830">bng-sap</text>
-  <rect class="node" x="270" y="810" width="100" height="40"/>
-  <text class="node-label" x="320" y="830">bng-tok</text>
-  <rect class="node" x="430" y="810" width="100" height="40"/>
-  <text class="node-label" x="480" y="830">bng-osa</text>
-  <rect class="node" x="590" y="810" width="100" height="40"/>
-  <text class="node-label" x="640" y="830">bng-fuk</text>
-  <rect class="node" x="110" y="950" width="100" height="40"/>
-  <text class="node-label" x="160" y="970">olt-sap</text>
-  <rect class="node" x="270" y="950" width="100" height="40"/>
-  <text class="node-label" x="320" y="970">olt-tok</text>
-  <rect class="node" x="430" y="950" width="100" height="40"/>
-  <text class="node-label" x="480" y="970">olt-osa</text>
-  <rect class="node" x="590" y="950" width="100" height="40"/>
-  <text class="node-label" x="640" y="970">olt-fuk</text>
-  <ellipse class="node" cx="160" cy="1110" rx="60" ry="24"/>
-  <text class="node-label" x="160" y="1110">customer</text>
-  <ellipse class="node" cx="320" cy="1110" rx="60" ry="24"/>
-  <text class="node-label" x="320" y="1110">customer</text>
-  <ellipse class="node" cx="480" cy="1110" rx="60" ry="24"/>
-  <text class="node-label" x="480" y="1110">customer</text>
-  <ellipse class="node" cx="640" cy="1110" rx="60" ry="24"/>
-  <text class="node-label" x="640" y="1110">customer</text>
+  <path class="edge" d="M457,158 L457,199 Q457,207 465,207 L519,207 Q527,207 527,215 L527,339 Q527,347 519,347 L465,347 Q457,347 457,355 L457,390" stroke-width="2"/>
+  <path class="edge" d="M684,158 L684,206 Q684,214 692,214 L746,214 Q754,214 754,222 L754,346 Q754,354 746,354 L692,354 Q684,354 684,362 L684,390" stroke-width="2"/>
+  <line class="edge" x1="410" y1="270" x2="410" y2="410" stroke-width="2"/>
+  <line class="edge" x1="630" y1="270" x2="630" y2="410" stroke-width="2"/>
+  <line class="edge" x1="410" y1="410" x2="410" y2="550" stroke-width="2"/>
+  <line class="edge" x1="630" y1="410" x2="630" y2="550" stroke-width="2"/>
+  <line class="edge" x1="190" y1="550" x2="410" y2="550" stroke-width="2"/>
+  <line class="edge" x1="410" y1="550" x2="630" y2="550" stroke-width="2"/>
+  <line class="edge" x1="630" y1="550" x2="850" y2="550" stroke-width="2"/>
+  <path class="edge" d="M850,530 L850,488 Q850,480 842,480 L198,480 Q190,480 190,488 L190,530" stroke-width="2"/>
+  <line class="edge" x1="190" y1="550" x2="190" y2="690" stroke-width="2"/>
+  <line class="edge" x1="410" y1="550" x2="410" y2="690" stroke-width="2"/>
+  <line class="edge" x1="630" y1="550" x2="630" y2="690" stroke-width="2"/>
+  <line class="edge" x1="850" y1="550" x2="850" y2="690" stroke-width="2"/>
+  <line class="edge" x1="190" y1="690" x2="190" y2="830" stroke-width="2"/>
+  <line class="edge" x1="410" y1="690" x2="410" y2="830" stroke-width="2"/>
+  <line class="edge" x1="630" y1="690" x2="630" y2="830" stroke-width="2"/>
+  <line class="edge" x1="850" y1="690" x2="850" y2="830" stroke-width="2"/>
+  <line class="edge" x1="190" y1="830" x2="190" y2="970" stroke-width="2"/>
+  <line class="edge" x1="410" y1="830" x2="410" y2="970" stroke-width="2"/>
+  <line class="edge" x1="630" y1="830" x2="630" y2="970" stroke-width="2"/>
+  <line class="edge" x1="850" y1="830" x2="850" y2="970" stroke-width="2"/>
+  <line class="edge" x1="190" y1="970" x2="190" y2="1110"/>
+  <line class="edge" x1="410" y1="970" x2="410" y2="1110"/>
+  <line class="edge" x1="630" y1="970" x2="630" y2="1110"/>
+  <line class="edge" x1="850" y1="970" x2="850" y2="1110"/>
+  <ellipse class="node" cx="410" cy="130" rx="90" ry="28"/>
+  <text class="node-label" x="410" y="130">Tier-1</text>
+  <ellipse class="node" cx="630" cy="130" rx="90" ry="28"/>
+  <text class="node-label" x="630" y="130">Tier-1</text>
+  <ellipse class="node" cx="410" cy="270" rx="90" ry="28"/>
+  <text class="node-label" x="410" y="270">tokyo-IX</text>
+  <ellipse class="node" cx="630" cy="270" rx="90" ry="28"/>
+  <text class="node-label" x="630" y="270">osaka-IX</text>
+  <rect class="node" x="330" y="390" width="160" height="40"/>
+  <text class="node-label" x="410" y="410">pe-tok</text>
+  <rect class="node" x="550" y="390" width="160" height="40"/>
+  <text class="node-label" x="630" y="410">pe-osa</text>
+  <rect class="node" x="110" y="530" width="160" height="40"/>
+  <text class="node-label" x="190" y="550">bb-sap</text>
+  <rect class="node" x="330" y="530" width="160" height="40"/>
+  <text class="node-label" x="410" y="550">bb-tok</text>
+  <rect class="node" x="550" y="530" width="160" height="40"/>
+  <text class="node-label" x="630" y="550">bb-osa</text>
+  <rect class="node" x="770" y="530" width="160" height="40"/>
+  <text class="node-label" x="850" y="550">bb-fuk</text>
+  <rect class="node" x="110" y="670" width="160" height="40"/>
+  <text class="node-label" x="190" y="690">mc-sap</text>
+  <rect class="node" x="330" y="670" width="160" height="40"/>
+  <text class="node-label" x="410" y="690">mc-tok</text>
+  <rect class="node" x="550" y="670" width="160" height="40"/>
+  <text class="node-label" x="630" y="690">mc-osa</text>
+  <rect class="node" x="770" y="670" width="160" height="40"/>
+  <text class="node-label" x="850" y="690">mc-fuk</text>
+  <rect class="node" x="110" y="810" width="160" height="40"/>
+  <text class="node-label" x="190" y="830">bng-sap</text>
+  <rect class="node" x="330" y="810" width="160" height="40"/>
+  <text class="node-label" x="410" y="830">bng-tok</text>
+  <rect class="node" x="550" y="810" width="160" height="40"/>
+  <text class="node-label" x="630" y="830">bng-osa</text>
+  <rect class="node" x="770" y="810" width="160" height="40"/>
+  <text class="node-label" x="850" y="830">bng-fuk</text>
+  <rect class="node" x="110" y="950" width="160" height="40"/>
+  <text class="node-label" x="190" y="970">olt-sap</text>
+  <rect class="node" x="330" y="950" width="160" height="40"/>
+  <text class="node-label" x="410" y="970">olt-tok</text>
+  <rect class="node" x="550" y="950" width="160" height="40"/>
+  <text class="node-label" x="630" y="970">olt-osa</text>
+  <rect class="node" x="770" y="950" width="160" height="40"/>
+  <text class="node-label" x="850" y="970">olt-fuk</text>
+  <ellipse class="node" cx="190" cy="1110" rx="90" ry="28"/>
+  <text class="node-label" x="190" y="1110">customer</text>
+  <ellipse class="node" cx="410" cy="1110" rx="90" ry="28"/>
+  <text class="node-label" x="410" y="1110">customer</text>
+  <ellipse class="node" cx="630" cy="1110" rx="90" ry="28"/>
+  <text class="node-label" x="630" y="1110">customer</text>
+  <ellipse class="node" cx="850" cy="1110" rx="90" ry="28"/>
+  <text class="node-label" x="850" y="1110">customer</text>
 </svg>
+
+

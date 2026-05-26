@@ -60,6 +60,10 @@ func run() error {
 		return fmt.Errorf("validate layout: %w", err)
 	}
 
+	if err := ValidateGroups(cfg, info); err != nil {
+		return fmt.Errorf("validate groups: %w", err)
+	}
+
 	svgSrc := GenerateSVG(cfg, info)
 	if _, err := io.WriteString(os.Stdout, svgSrc); err != nil {
 		return fmt.Errorf("write stdout: %w", err)
@@ -93,7 +97,7 @@ Reads a YAML topology description from FILE and emits SVG on stdout.
 Coordinates are computed directly from the validated layout; there
 is no external rendering engine in the pipeline.
 
-Example:
+Examples:
   netfig topology.yaml > diagram.svg
 
 `)

@@ -1,86 +1,90 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="2030" height="960" viewBox="0 0 2030 960">
+<svg xmlns="http://www.w3.org/2000/svg" width="3055" height="960" viewBox="0 0 3055 960">
   <style>
     .node { fill: white; stroke: black; stroke-width: 1; }
     .node-label { font-family: sans-serif; font-size: 11px; text-anchor: middle; dominant-baseline: central; }
     .edge { stroke: black; fill: none; }
     .edge-label { font-family: sans-serif; font-size: 10px; text-anchor: middle; }
+    .group { fill: #f2f2f2; stroke: none; }
+    .group-label { font-family: sans-serif; font-size: 11px; fill: #555; }
   </style>
-  <line class="edge" x1="160" y1="130" x2="160" y2="270" stroke-width="2"/>
-  <line class="edge" x1="160" y1="270" x2="160" y2="410" stroke-width="2"/>
-  <line class="edge" x1="160" y1="410" x2="915" y2="690" stroke-width="2"/>
-  <line class="edge" x1="160" y1="410" x2="1770" y2="690" stroke-width="2"/>
-  <line class="edge" x1="160" y1="410" x2="160" y2="550" stroke-width="2"/>
-  <polyline class="edge" points="915,710 310,810"/>
-  <polyline class="edge" points="915,710 420,810"/>
-  <line class="edge" x1="915" y1="690" x2="530" y2="830"/>
-  <line class="edge" x1="915" y1="690" x2="640" y2="830"/>
-  <line class="edge" x1="915" y1="690" x2="750" y2="830"/>
-  <line class="edge" x1="915" y1="690" x2="860" y2="830"/>
-  <line class="edge" x1="915" y1="690" x2="970" y2="830"/>
-  <line class="edge" x1="915" y1="690" x2="1080" y2="830"/>
-  <line class="edge" x1="915" y1="690" x2="1190" y2="830"/>
-  <line class="edge" x1="915" y1="690" x2="1300" y2="830"/>
-  <polyline class="edge" points="915,710 1410,810"/>
-  <polyline class="edge" points="915,710 1520,810"/>
-  <line class="edge" x1="1770" y1="690" x2="1660" y2="830"/>
-  <line class="edge" x1="1770" y1="690" x2="1770" y2="830"/>
-  <line class="edge" x1="1770" y1="690" x2="1880" y2="830"/>
-  <line class="edge" x1="310" y1="830" x2="160" y2="550" stroke-dasharray="6,4"/>
-  <line class="edge" x1="420" y1="830" x2="160" y2="550" stroke-dasharray="6,4"/>
-  <line class="edge" x1="530" y1="830" x2="160" y2="550" stroke-dasharray="6,4"/>
-  <line class="edge" x1="640" y1="830" x2="160" y2="550" stroke-dasharray="6,4"/>
-  <line class="edge" x1="750" y1="830" x2="160" y2="550" stroke-dasharray="6,4"/>
-  <line class="edge" x1="860" y1="830" x2="160" y2="550" stroke-dasharray="6,4"/>
-  <line class="edge" x1="970" y1="830" x2="160" y2="550" stroke-dasharray="6,4"/>
-  <polyline class="edge" points="1070,810 1070,770 250,770 250,630 190,630 190,570" stroke-dasharray="6,4"/>
-  <polyline class="edge" points="1185,810 1185,775 255,775 255,635 195,635 195,570" stroke-dasharray="6,4"/>
-  <polyline class="edge" points="1300,810 1300,780 260,780 260,640 200,640 200,570" stroke-dasharray="6,4"/>
-  <polyline class="edge" points="1415,810 1415,785 265,785 265,645 205,645 205,570" stroke-dasharray="6,4"/>
-  <polyline class="edge" points="1530,810 1530,790 270,790 270,650 210,650 210,570" stroke-dasharray="6,4"/>
-  <polyline class="edge" points="1638,810 1638,758 1588,758 1588,618 178,618 178,570" stroke-dasharray="6,4"/>
-  <polyline class="edge" points="1756,810 1756,766 1596,766 1596,626 186,626 186,570" stroke-dasharray="6,4"/>
-  <polyline class="edge" points="1874,810 1874,774 1604,774 1604,634 194,634 194,570" stroke-dasharray="6,4"/>
-  <ellipse class="node" cx="160" cy="130" rx="60" ry="24"/>
-  <text class="node-label" x="160" y="130">Internet</text>
-  <rect class="node" x="110" y="250" width="100" height="40"/>
-  <text class="node-label" x="160" y="270">edge-rt</text>
-  <rect class="node" x="110" y="390" width="100" height="40"/>
-  <text class="node-label" x="160" y="410">core-sw</text>
-  <rect class="node" x="110" y="530" width="100" height="40"/>
-  <text class="node-label" x="160" y="550">oob-sw</text>
-  <rect class="node" x="865" y="670" width="100" height="40"/>
-  <text class="node-label" x="915" y="690">tor-1</text>
-  <rect class="node" x="1720" y="670" width="100" height="40"/>
-  <text class="node-label" x="1770" y="690">tor-2</text>
-  <rect class="node" x="260" y="810" width="100" height="40"/>
-  <text class="node-label" x="310" y="830">srv-1-01</text>
-  <rect class="node" x="370" y="810" width="100" height="40"/>
-  <text class="node-label" x="420" y="830">srv-1-02</text>
-  <rect class="node" x="480" y="810" width="100" height="40"/>
-  <text class="node-label" x="530" y="830">srv-1-03</text>
-  <rect class="node" x="590" y="810" width="100" height="40"/>
-  <text class="node-label" x="640" y="830">srv-1-04</text>
-  <rect class="node" x="700" y="810" width="100" height="40"/>
-  <text class="node-label" x="750" y="830">srv-1-05</text>
-  <rect class="node" x="810" y="810" width="100" height="40"/>
-  <text class="node-label" x="860" y="830">srv-1-06</text>
-  <rect class="node" x="920" y="810" width="100" height="40"/>
-  <text class="node-label" x="970" y="830">srv-1-07</text>
-  <rect class="node" x="1030" y="810" width="100" height="40"/>
-  <text class="node-label" x="1080" y="830">srv-1-08</text>
-  <rect class="node" x="1140" y="810" width="100" height="40"/>
-  <text class="node-label" x="1190" y="830">srv-1-09</text>
-  <rect class="node" x="1250" y="810" width="100" height="40"/>
-  <text class="node-label" x="1300" y="830">srv-1-10</text>
-  <rect class="node" x="1360" y="810" width="100" height="40"/>
-  <text class="node-label" x="1410" y="830">srv-1-11</text>
-  <rect class="node" x="1470" y="810" width="100" height="40"/>
-  <text class="node-label" x="1520" y="830">srv-1-12</text>
-  <rect class="node" x="1610" y="810" width="100" height="40"/>
-  <text class="node-label" x="1660" y="830">srv-2-01</text>
-  <rect class="node" x="1720" y="810" width="100" height="40"/>
-  <text class="node-label" x="1770" y="830">srv-2-02</text>
-  <rect class="node" x="1830" y="810" width="100" height="40"/>
-  <text class="node-label" x="1880" y="830">srv-2-03</text>
+  <line class="edge" x1="190" y1="130" x2="190" y2="270" stroke-width="2"/>
+  <line class="edge" x1="190" y1="270" x2="190" y2="410" stroke-width="2"/>
+  <line class="edge" x1="190" y1="410" x2="1362" y2="690" stroke-width="2"/>
+  <line class="edge" x1="190" y1="410" x2="2700" y2="690" stroke-width="2"/>
+  <line class="edge" x1="190" y1="410" x2="190" y2="550" stroke-width="2"/>
+  <path class="edge" d="M1362,710 L400,810"/>
+  <path class="edge" d="M1362,710 L575,810"/>
+  <line class="edge" x1="1362" y1="690" x2="750" y2="830"/>
+  <line class="edge" x1="1362" y1="690" x2="925" y2="830"/>
+  <line class="edge" x1="1362" y1="690" x2="1100" y2="830"/>
+  <line class="edge" x1="1362" y1="690" x2="1275" y2="830"/>
+  <line class="edge" x1="1362" y1="690" x2="1449" y2="830"/>
+  <line class="edge" x1="1362" y1="690" x2="1624" y2="830"/>
+  <line class="edge" x1="1362" y1="690" x2="1799" y2="830"/>
+  <line class="edge" x1="1362" y1="690" x2="1974" y2="830"/>
+  <path class="edge" d="M1362,710 L2149,810"/>
+  <path class="edge" d="M1362,710 L2324,810"/>
+  <line class="edge" x1="2700" y1="690" x2="2525" y2="830"/>
+  <line class="edge" x1="2700" y1="690" x2="2700" y2="830"/>
+  <line class="edge" x1="2700" y1="690" x2="2875" y2="830"/>
+  <line class="edge" x1="400" y1="830" x2="190" y2="550" stroke-dasharray="6,4"/>
+  <line class="edge" x1="575" y1="830" x2="190" y2="550" stroke-dasharray="6,4"/>
+  <line class="edge" x1="750" y1="830" x2="190" y2="550" stroke-dasharray="6,4"/>
+  <line class="edge" x1="925" y1="830" x2="190" y2="550" stroke-dasharray="6,4"/>
+  <line class="edge" x1="1100" y1="830" x2="190" y2="550" stroke-dasharray="6,4"/>
+  <line class="edge" x1="1275" y1="830" x2="190" y2="550" stroke-dasharray="6,4"/>
+  <line class="edge" x1="1449" y1="830" x2="190" y2="550" stroke-dasharray="6,4"/>
+  <path class="edge" d="M1597,810 L1597,781 Q1597,773 1589,773 L321,773 Q313,773 313,765 L313,641 Q313,633 305,633 L251,633 Q243,633 243,625 L243,570" stroke-dasharray="6,4"/>
+  <path class="edge" d="M1779,810 L1779,788 Q1779,780 1771,780 L328,780 Q320,780 320,772 L320,648 Q320,640 312,640 L258,640 Q250,640 250,632 L250,570" stroke-dasharray="6,4"/>
+  <path class="edge" d="M1961,810 L1961,795 Q1961,787 1953,787 L335,787 Q327,787 327,779 L327,655 Q327,647 319,647 L265,647 Q257,647 257,639 L257,570" stroke-dasharray="6,4"/>
+  <path class="edge" d="M2143,810 L2143,802 Q2143,794 2135,794 L342,794 Q334,794 334,786 L334,662 Q334,654 326,654 L272,654 Q264,654 264,646 L264,570" stroke-dasharray="6,4"/>
+  <path class="edge" d="M2324,810 L2324,805 Q2324,800 2316,800 L348,800 Q340,800 340,792 L340,668 Q340,660 332,660 L278,660 Q270,660 270,652 L270,570" stroke-dasharray="6,4"/>
+  <path class="edge" d="M2475,810 L2475,758 Q2475,750 2467,750 L2423,750 Q2415,750 2415,742 L2415,618 Q2415,610 2407,610 L228,610 Q220,610 220,602 L220,570" stroke-dasharray="6,4"/>
+  <path class="edge" d="M2666,810 L2666,774 Q2666,766 2658,766 L2439,766 Q2431,766 2431,758 L2431,634 Q2431,626 2423,626 L244,626 Q236,626 236,618 L236,570" stroke-dasharray="6,4"/>
+  <path class="edge" d="M2857,810 L2857,790 Q2857,782 2849,782 L2455,782 Q2447,782 2447,774 L2447,650 Q2447,642 2439,642 L260,642 Q252,642 252,634 L252,570" stroke-dasharray="6,4"/>
+  <ellipse class="node" cx="190" cy="130" rx="90" ry="28"/>
+  <text class="node-label" x="190" y="130">Internet</text>
+  <rect class="node" x="110" y="250" width="160" height="40"/>
+  <text class="node-label" x="190" y="270">edge-rt</text>
+  <rect class="node" x="110" y="390" width="160" height="40"/>
+  <text class="node-label" x="190" y="410">core-sw</text>
+  <rect class="node" x="110" y="530" width="160" height="40"/>
+  <text class="node-label" x="190" y="550">oob-sw</text>
+  <rect class="node" x="1282" y="670" width="160" height="40"/>
+  <text class="node-label" x="1362" y="690">tor-1</text>
+  <rect class="node" x="2620" y="670" width="160" height="40"/>
+  <text class="node-label" x="2700" y="690">tor-2</text>
+  <rect class="node" x="320" y="810" width="160" height="40"/>
+  <text class="node-label" x="400" y="830">srv-1-01</text>
+  <rect class="node" x="495" y="810" width="160" height="40"/>
+  <text class="node-label" x="575" y="830">srv-1-02</text>
+  <rect class="node" x="670" y="810" width="160" height="40"/>
+  <text class="node-label" x="750" y="830">srv-1-03</text>
+  <rect class="node" x="845" y="810" width="160" height="40"/>
+  <text class="node-label" x="925" y="830">srv-1-04</text>
+  <rect class="node" x="1020" y="810" width="160" height="40"/>
+  <text class="node-label" x="1100" y="830">srv-1-05</text>
+  <rect class="node" x="1195" y="810" width="160" height="40"/>
+  <text class="node-label" x="1275" y="830">srv-1-06</text>
+  <rect class="node" x="1369" y="810" width="160" height="40"/>
+  <text class="node-label" x="1449" y="830">srv-1-07</text>
+  <rect class="node" x="1544" y="810" width="160" height="40"/>
+  <text class="node-label" x="1624" y="830">srv-1-08</text>
+  <rect class="node" x="1719" y="810" width="160" height="40"/>
+  <text class="node-label" x="1799" y="830">srv-1-09</text>
+  <rect class="node" x="1894" y="810" width="160" height="40"/>
+  <text class="node-label" x="1974" y="830">srv-1-10</text>
+  <rect class="node" x="2069" y="810" width="160" height="40"/>
+  <text class="node-label" x="2149" y="830">srv-1-11</text>
+  <rect class="node" x="2244" y="810" width="160" height="40"/>
+  <text class="node-label" x="2324" y="830">srv-1-12</text>
+  <rect class="node" x="2445" y="810" width="160" height="40"/>
+  <text class="node-label" x="2525" y="830">srv-2-01</text>
+  <rect class="node" x="2620" y="810" width="160" height="40"/>
+  <text class="node-label" x="2700" y="830">srv-2-02</text>
+  <rect class="node" x="2795" y="810" width="160" height="40"/>
+  <text class="node-label" x="2875" y="830">srv-2-03</text>
 </svg>
+
+

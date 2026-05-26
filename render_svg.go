@@ -16,10 +16,11 @@ import (
 // Where a straight line would pass through a non-endpoint node, the
 // edge is routed orthogonally (routing.go).
 
-// GenerateSVG converts a validated, view-filtered configuration into
-// SVG source.
+// GenerateSVG converts a validated configuration into SVG source.
 func GenerateSVG(cfg *Config, info *LayoutInfo) string {
-	nodes, totalWidth := placeNodes(cfg, info)
+	patterns := buildPatternIndex(cfg)
+	nodes, cols := placeNodes(cfg, info, patterns)
+	groups := placeGroups(cfg, info, cols)
 	byID := make(map[string]*placed, len(nodes))
 	for i := range nodes {
 		byID[nodes[i].ID] = &nodes[i]
@@ -28,16 +29,19 @@ func GenerateSVG(cfg *Config, info *LayoutInfo) string {
 	height := marginY*2 + len(info.BandNames)*bandHeight
 
 	var b strings.Builder
-	emitSVGHeader(&b, totalWidth, height)
+	emitSVGHeader(&b, cols.totalWidth, height)
 
-	// edges first so node fills overlay the segment ends
-	for _, l := range cfg.Links {
+	for _, g := range groups {
+		emitGroup(&b, g)
+	}
+
+	for i, l := range cfg.Links {
 		f, ok1 := byID[l.From]
 		t, ok2 := byID[l.To]
 		if !ok1 || !ok2 {
 			continue
 		}
-		emitEdge(&b, cfg, l, f, t, nodes)
+		emitEdge(&b, cfg, l, f, t, nodes, patterns.siblingOf(i))
 	}
 	for _, n := range nodes {
 		emitNode(&b, n)
@@ -56,7 +60,24 @@ func emitSVGHeader(b *strings.Builder, width, height int) {
 	fmt.Fprintln(b, `    .node-label { font-family: sans-serif; font-size: 11px; text-anchor: middle; dominant-baseline: central; }`)
 	fmt.Fprintln(b, `    .edge { stroke: black; fill: none; }`)
 	fmt.Fprintln(b, `    .edge-label { font-family: sans-serif; font-size: 10px; text-anchor: middle; }`)
+	fmt.Fprintln(b, `    .group { fill: #f2f2f2; stroke: none; }`)
+	fmt.Fprintln(b, `    .group-label { font-family: sans-serif; font-size: 11px; fill: #555; }`)
 	fmt.Fprintln(b, `  </style>`)
+}
+
+// emitGroup writes the filled rounded rectangle for one group, plus a
+// small label anchored at the top-left of the rectangle. The rect is
+// drawn without an outline and uses a light grey fill so it sits
+// visually under the node and link layer; that combination is what
+// keeps the group boundary from competing with link lines.
+func emitGroup(b *strings.Builder, g placedGroup) {
+	fmt.Fprintf(b, `  <rect class="group" x="%d" y="%d" width="%d" height="%d" rx="%d" ry="%d"/>`+"\n",
+		g.X, g.Y, g.W, g.H, groupCornerRadius, groupCornerRadius)
+	if g.Label == "" {
+		return
+	}
+	fmt.Fprintf(b, `  <text class="group-label" x="%d" y="%d">%s</text>`+"\n",
+		g.X+8, g.Y+14, escapeText(g.Label))
 }
 
 func emitNode(b *strings.Builder, p placed) {
@@ -77,15 +98,30 @@ func emitNode(b *strings.Builder, p placed) {
 // emitEdge writes one link. The default is a straight <line> between
 // the two node centres; the rect/ellipse fills overlay the segment so
 // only the portion outside the boxes is visible. If the straight line
-// would pass through a non-endpoint node, an orthogonal polyline is
-// emitted instead.
-func emitEdge(b *strings.Builder, cfg *Config, l Link, f, t *placed, all []placed) {
+// would pass through a non-endpoint node, an orthogonal rounded-corner
+// <path> is emitted instead.
+//
+// When the link is part of a sibling group declared by a pattern
+// (two or more links sharing the same endpoints and the same pattern
+// name), the route is shifted perpendicularly so the siblings render
+// as parallel runs rather than overlapping each other. Each link's
+// label is rendered on its own run; the writer is responsible for
+// choosing labels that fit. The placement layer widens the column
+// spacing in proportion to the maximum sibling count so labels have
+// room to render without intruding on adjacent columns.
+//
+// Straight-line emission is bypassed for any sibling because
+// offsetting a free diagonal does not produce a clean parallel pair —
+// orthogonal routing with a perpendicular lane offset does.
+func emitEdge(b *strings.Builder, cfg *Config, l Link, f, t *placed, all []placed, sib siblingInfo) {
 	attrs := edgeStyleAttrs(cfg, l)
-	if straightLineClear(f, t, all) {
+
+	if sib.Size == 1 && straightLineClear(f, t, all) {
 		emitStraightEdge(b, l, f, t, attrs)
 		return
 	}
-	emitPolylineEdge(b, l, orthogonalRoute(f, t, all), attrs)
+	pairLane := pairLaneOffset(sib.Index)
+	emitPolylineEdge(b, l, orthogonalRoute(f, t, all, pairLane), attrs)
 }
 
 // emitStraightEdge writes a straight <line> and (if any) a label
@@ -101,16 +137,19 @@ func emitStraightEdge(b *strings.Builder, l Link, f, t *placed, attrs string) {
 		mx, my-3, escapeText(l.Label))
 }
 
-// emitPolylineEdge writes a <polyline> for the routed waypoints and
-// (if any) a label placed on the longest horizontal segment so the
-// text reads cleanly.
+// emitPolylineEdge writes a rounded-corner <path> for the routed
+// waypoints and (if any) a label placed on the longest horizontal
+// segment so the text reads cleanly. The path uses straight L
+// commands between segments and a quadratic Q at each interior
+// vertex; the control point of each Q sits at the original vertex,
+// so the curve is tangent to the incoming and outgoing segments and
+// reads as a softened right angle rather than a free curve. Where a
+// segment is shorter than 2*edgeCornerRadius, the effective radius is
+// clamped so the rounded corner cannot consume more than half the
+// segment.
 func emitPolylineEdge(b *strings.Builder, l Link, pts []point, attrs string) {
-	pieces := make([]string, len(pts))
-	for i, p := range pts {
-		pieces[i] = fmt.Sprintf("%d,%d", p.X, p.Y)
-	}
-	fmt.Fprintf(b, `  <polyline class="edge" points="%s"%s/>`+"\n",
-		strings.Join(pieces, " "), attrs)
+	fmt.Fprintf(b, `  <path class="edge" d="%s"%s/>`+"\n",
+		roundedPath(pts), attrs)
 	if l.Label == "" {
 		return
 	}

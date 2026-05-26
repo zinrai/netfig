@@ -16,7 +16,7 @@ const (
 	// (e.g. an iBGP vertical between a route-reflector and a core
 	// router), which would otherwise be visually covered by the
 	// detour's heavier stroke.
-	detourFaceOffset = 20
+	detourFaceOffset = 40
 
 	// defaultLaneStep is the per-cell-index lateral lane separation
 	// applied throughout an orthogonal polyline. When several nodes
@@ -27,13 +27,37 @@ const (
 	//
 	// laneStepFor scales this down for dense cells so that the
 	// rightmost lane never falls outside the source rect.
-	defaultLaneStep = 8
+	defaultLaneStep = 16
+
+	// pairOffsetStep is the perpendicular spacing between siblings in
+	// a pattern group. The value is wide enough for two lines to read
+	// as a distinct pair rather than as one thicker line, even at
+	// low render resolutions.
+	pairOffsetStep = 16
 )
 
 // maxLaneFromCenter is the largest lane offset (in either direction)
 // that keeps a polyline endpoint inside the source rect under
 // detourFaceOffset.
 const maxLaneFromCenter = rectWidth/2 - detourFaceOffset
+
+// pairLaneOffset returns the perpendicular offset for the link at
+// the given index within a sibling group. The first link stays on
+// the centre line; subsequent links alternate sides, growing outward
+// (index 1 → +1 step, index 2 → -1 step, index 3 → +2 step, …).
+// Alternating keeps the sibling group visually balanced around the
+// original line position rather than drifting to one side as more
+// siblings are added.
+func pairLaneOffset(index int) int {
+	if index == 0 {
+		return 0
+	}
+	step := (index + 1) / 2
+	if index%2 == 1 {
+		return step * pairOffsetStep
+	}
+	return -step * pairOffsetStep
+}
 
 // point is one (x, y) waypoint of a polyline.
 type point struct{ X, Y int }
@@ -42,47 +66,86 @@ type point struct{ X, Y int }
 // that routes from f to t. It dispatches to one of three per-shape
 // helpers; each helper handles its own obstacle-detection and
 // detour decisions.
-func orthogonalRoute(f, t *placed, all []placed) []point {
+//
+// pairLane is the perpendicular offset for this link within a
+// sibling group (links sharing endpoints under the same pattern).
+// It is zero for solitary links. Non-zero pairLane shifts the
+// route's main run away from where its siblings sit, so a redundant
+// pair of links between the same two nodes renders as parallel runs
+// rather than overlapping each other.
+func orthogonalRoute(f, t *placed, all []placed, pairLane int) []point {
 	if f.Band == t.Band {
-		return routeSameBand(f, t, all)
+		return routeSameBand(f, t, all, pairLane)
 	}
 	if f.Col == t.Col {
-		return routeSameCol(f, t, all)
+		return routeSameCol(f, t, all, pairLane)
 	}
-	return routeCrossCol(f, t, all)
+	return routeCrossCol(f, t, all, pairLane)
 }
 
 // routeSameBand handles edges whose endpoints share a band. Without
-// an intermediate-column obstacle in the row, a single horizontal
-// face-to-face segment suffices. With an obstacle, the route
-// detours through the band-gap above (or below, for the topmost
-// band).
-func routeSameBand(f, t *placed, all []placed) []point {
-	if !hasIntermediateColObstacleInBand(f.Band, f.Col, t.Col, all) {
-		return faceToFace(f, t)
+// an obstacle in the horizontal path, a single face-to-face segment
+// suffices. With an obstacle — whether a node in an intermediate
+// column or a same-cell sibling of the source or target that sits
+// between them — the route detours through the band-gap above (or
+// below, for the topmost band).
+func routeSameBand(f, t *placed, all []placed, pairLane int) []point {
+	if sameBandPathClear(f, t, all) {
+		return faceToFace(f, t, pairLane)
 	}
-	return sameBandDetour(f, t)
+	return sameBandDetour(f, t, pairLane)
+}
+
+// sameBandPathClear reports whether the horizontal segment from f
+// to t (at band height) is free of non-endpoint node rectangles. It
+// catches both intermediate-column obstacles and same-cell siblings
+// of either endpoint that happen to sit between f's CX and t's CX.
+func sameBandPathClear(f, t *placed, all []placed) bool {
+	lo, hi := f.CX, t.CX
+	if lo > hi {
+		lo, hi = hi, lo
+	}
+	for i := range all {
+		p := &all[i]
+		if p.ID == f.ID || p.ID == t.ID {
+			continue
+		}
+		if p.Band != f.Band {
+			continue
+		}
+		// Reject if this node's horizontal extent overlaps the
+		// open span (lo, hi) — strict inequality so an endpoint
+		// flush against a sibling does not count.
+		nodeLeft := p.CX - p.HalfW
+		nodeRight := p.CX + p.HalfW
+		if nodeRight > lo && nodeLeft < hi {
+			return false
+		}
+	}
+	return true
 }
 
 // faceToFace returns the simple 2-point horizontal between the two
-// nodes' inside faces.
-func faceToFace(f, t *placed) []point {
+// nodes' inside faces, shifted vertically by pairLane so siblings
+// run in parallel.
+func faceToFace(f, t *placed, pairLane int) []point {
 	if f.Col < t.Col {
 		return []point{
-			{f.CX + f.HalfW, f.CY},
-			{t.CX - t.HalfW, t.CY},
+			{f.CX + f.HalfW, f.CY + pairLane},
+			{t.CX - t.HalfW, t.CY + pairLane},
 		}
 	}
 	return []point{
-		{f.CX - f.HalfW, f.CY},
-		{t.CX + t.HalfW, t.CY},
+		{f.CX - f.HalfW, f.CY + pairLane},
+		{t.CX + t.HalfW, t.CY + pairLane},
 	}
 }
 
 // sameBandDetour returns the 4-point polyline that loops above the
 // source band (or below, for band 0) to skirt an intermediate-column
-// obstacle in the same row.
-func sameBandDetour(f, t *placed) []point {
+// obstacle in the same row. A non-zero pairLane shifts the detour
+// rail away from its siblings'.
+func sameBandDetour(f, t *placed, pairLane int) []point {
 	detourY := marginY + f.Band*bandHeight
 	sourceFace := f.CY - f.HalfH
 	targetFace := t.CY - t.HalfH
@@ -91,6 +154,7 @@ func sameBandDetour(f, t *placed) []point {
 		sourceFace = f.CY + f.HalfH
 		targetFace = t.CY + t.HalfH
 	}
+	detourY += pairLane
 	return []point{
 		{f.CX, sourceFace},
 		{f.CX, detourY},
@@ -103,17 +167,17 @@ func sameBandDetour(f, t *placed) []point {
 // an intermediate-band obstacle the route is a straight vertical
 // (emitted as a 2-point polyline). With an obstacle, the polyline
 // U-turns through the column-gap on the right.
-func routeSameCol(f, t *placed, all []placed) []point {
+func routeSameCol(f, t *placed, all []placed, pairLane int) []point {
 	exitY, entryY, sourceGapY, targetGapY := bandGapYs(f, t)
 
 	if !hasIntermediateObstacleInCol(f.Band, t.Band, f.Col, all) {
 		return []point{
-			{f.CX, exitY},
-			{t.CX, entryY},
+			{f.CX + pairLane, exitY},
+			{t.CX + pairLane, entryY},
 		}
 	}
 
-	lane := laneOffset(f, t)
+	lane := laneOffset(f, t) + pairLane
 	exitX := f.CX + detourFaceOffset + lane
 	enterX := t.CX + detourFaceOffset + lane
 	detourX := f.ColRightX + lane
@@ -131,9 +195,9 @@ func routeSameCol(f, t *placed, all []placed) []point {
 // Without intermediate-band obstacles, a 4-point Z-shape suffices.
 // With an obstacle on either endpoint's column, the route traverses
 // two band-gaps with the vertical between them at the column-gap.
-func routeCrossCol(f, t *placed, all []placed) []point {
+func routeCrossCol(f, t *placed, all []placed, pairLane int) []point {
 	exitY, entryY, sourceGapY, targetGapY := bandGapYs(f, t)
-	lane := laneOffset(f, t)
+	lane := laneOffset(f, t) + pairLane
 	exitOff, enterOff, colGapX := crossColFaces(f, t, lane)
 
 	fObs := hasIntermediateObstacleInCol(f.Band, t.Band, f.Col, all)
@@ -281,26 +345,6 @@ func hasIntermediateObstacleInCol(fBand, tBand, col int, all []placed) bool {
 	for i := range all {
 		p := &all[i]
 		if p.Col == col && p.Band > lo && p.Band < hi {
-			return true
-		}
-	}
-	return false
-}
-
-// hasIntermediateColObstacleInBand reports whether any node sits in
-// the given band, at a column strictly between fCol and tCol. This
-// is the same-band counterpart to hasIntermediateObstacleInCol: it
-// flags a same-band edge whose horizontal segment would cross a
-// sibling's bounding box (e.g. a backbone-ring closure that crosses
-// the backbone routers between its endpoints).
-func hasIntermediateColObstacleInBand(band, fCol, tCol int, all []placed) bool {
-	lo, hi := fCol, tCol
-	if lo > hi {
-		lo, hi = hi, lo
-	}
-	for i := range all {
-		p := &all[i]
-		if p.Band == band && p.Col > lo && p.Col < hi {
 			return true
 		}
 	}

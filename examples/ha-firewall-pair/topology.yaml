@@ -20,8 +20,6 @@ legend:
       meaning: standby_path
 
 layout:
-  routing: orthogonal
-
   bands:
     - name: external
       roles: [edge-router]
@@ -80,3 +78,5 @@ links:
   - { from: fw02, to: core02, kind: primary }
   - { from: fw01, to: core02, kind: standby }
   - { from: fw02, to: core01, kind: standby }
+
+

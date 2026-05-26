@@ -29,8 +29,6 @@ legend:
       width: 1
 
 layout:
-  routing: orthogonal
-
   bands:
     - name: external
       roles: [transit, peer]
@@ -167,3 +165,5 @@ links:
   - { from: agg-tok, to: cust-tok, kind: customer-link }
   - { from: agg-osa, to: cust-osa, kind: customer-link }
   - { from: agg-fuk, to: cust-fuk, kind: customer-link }
+
+

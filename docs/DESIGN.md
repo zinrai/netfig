@@ -75,8 +75,40 @@ to SVG: the validated layout becomes pixel coordinates by simple
 arithmetic; each node becomes a `<rect>` or `<ellipse>` with a
 centred label; each link becomes either a straight `<line>`
 between the two centres or, when a straight line would cross a
-non-endpoint node, an orthogonal `<polyline>` routed through the
-gap between bands.
+non-endpoint node, an orthogonal `<path>` routed through the gap
+between bands. Routed paths have rounded corners at every bend,
+because a sharp right-angle break interrupts the reader's tracking
+of a line where rounding lets the eye continue past the bend
+without re-acquiring the line on the far side.
+
+Groups, when declared, render as filled rectangles drawn under
+every node and link. An outline-style boundary would compete with
+the link lines for the reader's attention; the filled variant does
+not. netfig adopts the filled variant for that reason.
+
+Patterns name a visual convention for a group of related links —
+two or more links between the same endpoints that also share the
+same kind. The convention is parallel runs: each link in the group
+is rendered on a different perpendicular lane, so the group's
+members do not overlap. The pattern's name is what tells the reader
+what the parallel-run convention represents in this diagram;
+without the pattern, two same-kind links between the same endpoints
+would be ambiguous (a redundant pair? two unrelated relationships?).
+netfig refuses to render same-kind duplicate endpoints unless every
+member declares the same pattern. Two links between the same
+endpoints with different kinds are not siblings — their kinds
+already declare distinct visual meanings, so they render as two
+separate lines, not as parallel runs. Inter-column gaps are widened
+in proportion to the maximum sibling group crossing them so the
+parallel runs and their labels have room.
+
+Node shapes are sized generously enough to fit realistic labels —
+role identifiers plus a brief qualifier like "site-b-edge1
+(transit)" or "customer-a AS65100". A label longer than the shape
+allows is read as a signal that the writer's label is too verbose
+for the diagram, not as a reason to size the shape per-label. All
+rect-shape nodes share one size and all ellipse-shape nodes share
+another; same role, same look.
 
 There is no external rendering engine in the pipeline. Converting
 SVG to PNG, PDF, or other formats is left to standard SVG tools.
@@ -115,15 +147,20 @@ at diagrams that need to outlive the moment of their creation.
 
 What is implemented:
 
-- Parse a YAML description of nodes, links, legend, and layout.
+- Parse a YAML description of nodes, links, legend, layout, and
+  groups.
 - Validate roles, link kinds, and shapes against the legend.
 - Validate cell density (a `(band, location)` cell holds at most
   `maxNodesPerCell` nodes).
+- Validate groups: every group references known locations and bands.
 - Compute pixel coordinates for every node from its (band,
   location) cell.
 - Render to SVG: rect/ellipse nodes with centred labels, straight
-  lines for unobstructed links, orthogonal polylines for links
-  that would otherwise cross a non-endpoint node.
+  lines for unobstructed links, rounded-corner orthogonal paths for
+  links that would otherwise cross a non-endpoint node, filled
+  rectangles under everything else for groups, and parallel runs
+  for links that belong to a declared pattern (two or more links
+  on the same endpoints and kind under the same pattern name).
 - Fail with a non-zero exit on any input the tool cannot honour
   faithfully.
 
@@ -136,6 +173,8 @@ What is not implemented:
 - Converting SVG to PNG, PDF, or other formats. Standard SVG
   tools handle this.
 - Icon support beyond `rect` and `ellipse`.
+- Colour as a link variable. Line variety is capped at three
+  styles total; colour is not used as a distinguishing dimension.
 - Determining the diagram's purpose. The `purpose` YAML field is
   recorded as metadata only.
 
@@ -149,3 +188,5 @@ without arguing it is the only right one.
 
 Online catalogue entry:
 [ネットワーク図の描き方入門](https://bookplus.nikkei.com/atcl/catalog/25/11/21/02321/)
+
+

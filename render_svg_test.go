@@ -119,7 +119,8 @@ func TestGenerateSVG_HeavyLineKindEmittedAsStrokeWidth(t *testing.T) {
 func TestGenerateSVG_StraightLineDetourWhenObstructed(t *testing.T) {
 	// Three bands, single column, with a node in the middle band that
 	// would be pierced by a straight vertical line from top to bottom.
-	// The renderer must emit a polyline detour, not a straight line.
+	// The renderer must emit a routed edge (rounded-corner <path>),
+	// not a straight <line>.
 	cfg := &Config{
 		Legend: Legend{
 			Symbols: map[string]Symbol{
@@ -148,8 +149,11 @@ func TestGenerateSVG_StraightLineDetourWhenObstructed(t *testing.T) {
 		t.Fatalf("validate layout: %v", err)
 	}
 	svg := GenerateSVG(cfg, info)
-	if !strings.Contains(svg, "<polyline") {
-		t.Errorf("expected <polyline> detour around 'n-mid' obstacle, got:\n%s", svg)
+	if !strings.Contains(svg, `<path class="edge"`) {
+		t.Errorf("expected <path class=\"edge\"> detour around 'n-mid' obstacle, got:\n%s", svg)
+	}
+	if !strings.Contains(svg, " Q") {
+		t.Errorf("expected at least one quadratic-curve (Q) corner in the detour path, got:\n%s", svg)
 	}
 }
 
@@ -157,7 +161,8 @@ func TestGenerateSVG_SameBandDetourWhenObstructed(t *testing.T) {
 	// Three nodes in the same band across three columns. A link
 	// connecting the leftmost to the rightmost would, drawn as a
 	// straight horizontal, pass through the middle node. The renderer
-	// must emit a polyline that detours through the band-gap above.
+	// must emit a routed edge (rounded-corner <path>) that detours
+	// through the band-gap above.
 	cfg := &Config{
 		Legend: Legend{
 			Symbols: map[string]Symbol{
@@ -189,8 +194,8 @@ func TestGenerateSVG_SameBandDetourWhenObstructed(t *testing.T) {
 		t.Fatalf("validate layout: %v", err)
 	}
 	svg := GenerateSVG(cfg, info)
-	if !strings.Contains(svg, "<polyline") {
-		t.Errorf("expected <polyline> detour around middle obstacle 'b', got:\n%s", svg)
+	if !strings.Contains(svg, `<path class="edge"`) {
+		t.Errorf("expected <path class=\"edge\"> detour around middle obstacle 'b', got:\n%s", svg)
 	}
 }
 

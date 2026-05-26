@@ -60,5 +60,11 @@ func ValidateLegend(cfg *Config) error {
 		return fmt.Errorf("legend declares %d distinct line styles; limit is three", len(styles))
 	}
 
+	for name, p := range cfg.Legend.Patterns {
+		if p.Meaning == "" {
+			return fmt.Errorf("legend.patterns[%s] has no meaning; every pattern must declare what the visual convention represents", name)
+		}
+	}
+
 	return nil
 }
