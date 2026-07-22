@@ -7,11 +7,6 @@ import (
 	"os"
 )
 
-// Version is the netfig release identifier. The default value "dev"
-// is used for local builds; release builds inject the git tag via
-// `-ldflags "-X main.Version=..."` (configured in .goreleaser.yaml).
-var Version = "dev"
-
 // netfig validates a YAML description of a network and emits SVG on
 // stdout. Coordinates are computed directly from the validated
 // (band, location) layout, so there is no external layout engine in
@@ -33,7 +28,7 @@ func run() error {
 	flag.Parse()
 
 	if *showVersion {
-		fmt.Println(Version)
+		printVersion()
 		return nil
 	}
 
