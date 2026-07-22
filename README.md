@@ -30,7 +30,6 @@ and out-of-band management networks (`examples/dense-cell`):
 ## Quick start
 
 ```
-go install github.com/zinrai/netfig@latest
 netfig topology.yaml > diagram.svg
 ```
 
